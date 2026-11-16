@@ -1239,4 +1239,72 @@ void main() {
     expect(find.byKey(const Key('map_marker_safehouse_1')), findsOneWidget);
     expect(find.byKey(const Key('map_marker_collectible_1')), findsNothing);
   });
+
+  testWidgets('Find Next Closest SnackBar is immediately dismissed when user taps a map marker to open its info card', (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+
+    final testPois = [
+      MapPointOfInterest(
+        id: 'sub_piece_1',
+        name: 'Submarine Piece #01',
+        category: 'collectibles',
+        subCategory: 'submarine_pieces',
+        gameX: -100.0,
+        gameY: 200.0,
+        description: 'First piece in Paleto Bay',
+        isCollectable: true,
+      ),
+      MapPointOfInterest(
+        id: 'sub_piece_2',
+        name: 'Submarine Piece #02 - Paleto Cove',
+        category: 'collectibles',
+        subCategory: 'submarine_pieces',
+        gameX: 1200.0,
+        gameY: 1500.0,
+        description: 'Paleto Cove Propeller Assembly',
+        isCollectable: true,
+      ),
+    ];
+
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        poiProvider.overrideWith((ref) => Future.value(testPois)),
+        mapPoiProvider.overrideWith((ref) => Future.value(testPois)),
+        wikiItemsProvider.overrideWith((ref) => Future.value([])),
+      ],
+    );
+    container.read(mapFilterProvider.notifier).enableAll();
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(body: MapTab()),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    // 1. Tap first marker and trigger 'Find Next Closest'
+    await tester.tap(find.byKey(const Key('map_marker_sub_piece_1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Find Next Closest'));
+    await tester.pumpAndSettle();
+
+    // Confirm the floating SnackBar is currently visible
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.textContaining('Targeted closest (~'), findsOneWidget);
+
+    // 2. Instead of tapping 'View' on the SnackBar, tap the marker directly on the map
+    await tester.tap(find.byKey(const Key('map_marker_sub_piece_2')));
+    await tester.pumpAndSettle();
+
+    // The floating SnackBar must be immediately dismissed while the info sheet is open
+    expect(find.byType(SnackBar), findsNothing);
+    expect(find.textContaining('Targeted closest (~'), findsNothing);
+    expect(find.text('Paleto Cove Propeller Assembly'), findsOneWidget);
+  });
 }

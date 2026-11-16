@@ -80,6 +80,14 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
     }
   }
 
+  void _dismissActiveSnackBar([BuildContext? fallbackContext]) {
+    final targetContext = mounted ? context : fallbackContext;
+    if (targetContext == null) return;
+    final messenger = ScaffoldMessenger.maybeOf(targetContext);
+    messenger?.hideCurrentSnackBar();
+    messenger?.clearSnackBars();
+  }
+
   void _handleTargetMapPosition(TargetMapPosition target) {
     _mapController.move(target.position, target.zoom);
 
@@ -541,6 +549,7 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
   }
 
   void _showLayerSwitcherSheet(BuildContext context, WidgetRef ref) {
+    _dismissActiveSnackBar(context);
     showModalBottomSheet(
       context: context,
       builder: (ctx) {
@@ -587,6 +596,7 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
 
   void _showCompletionSummarySheet(
       BuildContext context, WidgetRef ref, MapCompletionSummary summary) {
+    _dismissActiveSnackBar(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -718,6 +728,7 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
   }
 
   void _showFilterSheet(BuildContext context, WidgetRef ref) {
+    _dismissActiveSnackBar(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1018,6 +1029,7 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
   void _showPoiDetails(BuildContext context, WidgetRef ref, MapPointOfInterest poi) {
     final hostContext = mounted ? this.context : context;
     final hostRef = this.ref;
+    _dismissActiveSnackBar(hostContext);
     if (hostRef.read(selectedPoiProvider)?.id != poi.id) {
       hostRef.read(selectedPoiProvider.notifier).state = poi;
     }
