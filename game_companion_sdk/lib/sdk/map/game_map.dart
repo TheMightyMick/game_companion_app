@@ -13,6 +13,7 @@ class GameMap extends StatelessWidget {
   final double minZoom;
   final double maxZoom;
   final TileProvider? tileProvider;
+  final TapCallback? onTap;
 
   /// Highest zoom level the tile server actually provides. Beyond this the
   /// tiles from this level are upscaled instead of requesting missing tiles.
@@ -35,6 +36,7 @@ class GameMap extends StatelessWidget {
     this.maxNativeZoom = 7,
     this.backgroundColor = const Color(0xFF1E5AA0),
     this.tileProvider,
+    this.onTap,
   });
 
   @override
@@ -47,6 +49,7 @@ class GameMap extends StatelessWidget {
         minZoom: minZoom,
         maxZoom: maxZoom,
         backgroundColor: backgroundColor,
+        onTap: onTap,
         interactionOptions: const InteractionOptions(
           flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
           enableMultiFingerGestureRace: true,

@@ -30,12 +30,31 @@ class WikiDetailScreen extends ConsumerWidget {
     final allPois = mapPoisAsync.valueOrNull ?? [];
 
     final matchingPoi = allPois.cast<MapPointOfInterest?>().firstWhere(
-      (poi) => poi != null && (
-        poi.name.trim().toLowerCase() == item.title.trim().toLowerCase() ||
-        poi.id.trim().toLowerCase() == item.id.trim().toLowerCase()
-      ),
+      (poi) {
+        if (poi == null) return false;
+        final poiId = poi.id.trim().toLowerCase();
+        final poiName = poi.name.trim().toLowerCase();
+        final itemTitle = item.title.trim().toLowerCase();
+        final itemId = item.id.trim().toLowerCase();
+        final relatedId = item.relatedPoiId?.trim().toLowerCase();
+
+        if (relatedId != null && relatedId.isNotEmpty && poiId == relatedId) {
+          return true;
+        }
+        if (poiName == itemTitle || poiId == itemId) {
+          return true;
+        }
+        if (itemTitle.length >= 4 && poiName.contains(itemTitle)) {
+          return true;
+        }
+        return false;
+      },
       orElse: () => null,
     );
+
+    final hasWhereToFind = item.spawnLocations.isNotEmpty ||
+        item.acquisitionTips.isNotEmpty ||
+        matchingPoi != null;
 
     return Scaffold(
       appBar: AppBar(
@@ -157,22 +176,146 @@ class WikiDetailScreen extends ConsumerWidget {
               ),
             ),
           ),
-          if (matchingPoi != null) ...[
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                icon: const Icon(Icons.map),
-                label: const Text('View on Map'),
-                onPressed: () {
-                  final coords = inGameToMapCoords(matchingPoi.gameX, matchingPoi.gameY);
-                  ref.read(targetMapPositionProvider.notifier).state = TargetMapPosition(
-                    position: coords,
-                    zoom: 4.5,
-                    poiId: matchingPoi.id,
-                  );
-                  context.go('/map');
-                },
+          if (hasWhereToFind) ...[
+            const SizedBox(height: 24),
+            Row(
+              key: const Key('wiki_where_to_find_section'),
+              children: [
+                Icon(Icons.explore, size: 22, color: meta.accentColor),
+                const SizedBox(width: 8),
+                Text(
+                  'Where to Find & Tips',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Card(
+              elevation: 1.5,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (item.spawnLocations.isNotEmpty) ...[
+                      Text(
+                        'Spawn & Purchase Locations',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              color: meta.accentColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: item.spawnLocations.map((loc) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: meta.accentColor.withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: meta.accentColor.withValues(alpha: 0.45),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.place_outlined,
+                                  size: 15,
+                                  color: meta.accentColor,
+                                ),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    loc,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                    if (item.spawnLocations.isNotEmpty &&
+                        item.acquisitionTips.isNotEmpty)
+                      const Divider(height: 24),
+                    if (item.acquisitionTips.isNotEmpty) ...[
+                      Text(
+                        'Acquisition & Upgrade Tips',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              color: meta.accentColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 10),
+                      ...item.acquisitionTips.map((tip) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2.0),
+                                child: Icon(
+                                  Icons.lightbulb_outline,
+                                  size: 17,
+                                  color: meta.accentColor,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  tip,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(height: 1.35),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                    if (matchingPoi != null) ...[
+                      if (item.spawnLocations.isNotEmpty ||
+                          item.acquisitionTips.isNotEmpty)
+                        const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          key: const Key('wiki_view_on_map_button'),
+                          icon: const Icon(Icons.map),
+                          label: const Text('View Spawn on Map'),
+                          onPressed: () {
+                            final coords = inGameToMapCoords(
+                              matchingPoi.gameX,
+                              matchingPoi.gameY,
+                            );
+                            ref.read(targetMapPositionProvider.notifier).state =
+                                TargetMapPosition(
+                              position: coords,
+                              zoom: 4.5,
+                              poiId: matchingPoi.id,
+                              shakeAndOpenCard: true,
+                            );
+                            context.go('/map');
+                          },
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ),
           ],

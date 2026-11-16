@@ -5,6 +5,8 @@ import '../../sdk/registry/game_registry.dart';
 import '../../sdk/models/game_manifest.dart';
 import '../widgets/game_switcher_drawer.dart';
 import '../widgets/global_search_bar.dart';
+import '../widgets/onboarding_tutorial_overlay.dart';
+import '../providers/onboarding_provider.dart';
 import '../providers/scroll_providers.dart';
 
 class ShellScreen extends ConsumerWidget {
@@ -74,9 +76,25 @@ class ShellScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const GlobalSearchBar(),
+        actions: [
+          IconButton(
+            key: const Key('shell_replay_tutorial_button'),
+            icon: const Icon(Icons.help_outline),
+            tooltip: 'App Tutorial',
+            onPressed: () {
+              ref.read(onboardingStepProvider.notifier).state = 0;
+              ref.read(onboardingCompletedProvider.notifier).resetOnboarding();
+            },
+          ),
+        ],
       ),
       drawer: const GameSwitcherDrawer(),
-      body: navigationShell,
+      body: Stack(
+        children: [
+          navigationShell,
+          const OnboardingTutorialOverlay(),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: (index) => _onItemTapped(context, ref, index),

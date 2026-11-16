@@ -7,17 +7,25 @@ import 'package:game_companion_sdk/ui/providers/map_providers.dart';
 
 void main() {
   group('MapFilterState & MapFilterNotifier', () {
-    test('Default state has canonical subcategories enabled', () {
+    test('Default state has only services subcategories enabled', () {
       final notifier = MapFilterNotifier();
-      expect(notifier.isSubcategoryEnabled('spaceship_parts'), isTrue);
-      expect(notifier.isSubcategoryEnabled('letter_scraps'), isTrue);
-      expect(notifier.isSubcategoryEnabled('stunt_jumps'), isTrue);
-      expect(notifier.isCategoryFullyEnabled('collectibles'), isTrue);
-      expect(notifier.isCategoryPartiallyEnabled('collectibles'), isFalse);
+      expect(notifier.isSubcategoryEnabled('properties'), isTrue);
+      expect(notifier.isSubcategoryEnabled('safehouses'), isTrue);
+      expect(notifier.isSubcategoryEnabled('ammunation'), isTrue);
+      expect(notifier.isCategoryFullyEnabled('services'), isTrue);
+      expect(notifier.isCategoryPartiallyEnabled('services'), isFalse);
+
+      // Other categories are disabled by default to prevent initial map clutter
+      expect(notifier.isSubcategoryEnabled('spaceship_parts'), isFalse);
+      expect(notifier.isSubcategoryEnabled('letter_scraps'), isFalse);
+      expect(notifier.isSubcategoryEnabled('stunt_jumps'), isFalse);
+      expect(notifier.isCategoryFullyEnabled('collectibles'), isFalse);
+      expect(notifier.isCategoryFullyEnabled('stunts'), isFalse);
+      expect(notifier.isCategoryFullyEnabled('secrets_world'), isFalse);
     });
 
     test('Toggling a single subcategory operates independently', () {
-      final notifier = MapFilterNotifier();
+      final notifier = MapFilterNotifier()..enableAll();
 
       // Toggle off spaceship_parts
       notifier.toggleSubcategory('spaceship_parts');
@@ -36,7 +44,7 @@ void main() {
     });
 
     test('Toggling a category group affects only that group', () {
-      final notifier = MapFilterNotifier();
+      final notifier = MapFilterNotifier()..enableAll();
 
       // Disabling stunts group
       notifier.toggleCategoryGroup('stunts');
@@ -57,19 +65,67 @@ void main() {
       expect(notifier.isCategoryFullyEnabled('stunts'), isTrue);
     });
 
-    test('enableAll and disableAll work across all subcategories', () {
+    test('enableAll, disableAll, and resetToDefaults work across subcategories', () {
       final notifier = MapFilterNotifier();
 
       notifier.disableAll();
+      expect(notifier.state.enabledSubcategories, isEmpty);
+      expect(notifier.isSubcategoryEnabled('properties'), isFalse);
       expect(notifier.isSubcategoryEnabled('spaceship_parts'), isFalse);
-      expect(notifier.isSubcategoryEnabled('stunt_jumps'), isFalse);
-      expect(notifier.isCategoryFullyEnabled('collectibles'), isFalse);
-      expect(notifier.isCategoryPartiallyEnabled('collectibles'), isFalse);
 
       notifier.enableAll();
       expect(notifier.isSubcategoryEnabled('spaceship_parts'), isTrue);
       expect(notifier.isSubcategoryEnabled('stunt_jumps'), isTrue);
       expect(notifier.isCategoryFullyEnabled('collectibles'), isTrue);
+      expect(notifier.isCategoryFullyEnabled('services'), isTrue);
+
+      notifier.resetToDefaults();
+      expect(
+        notifier.state.enabledSubcategories,
+        equals(MapFilterState.defaultInitialSubcategories),
+      );
+      expect(notifier.isCategoryFullyEnabled('services'), isTrue);
+      expect(notifier.isCategoryFullyEnabled('collectibles'), isFalse);
+    });
+
+    test('Persists enabledSubcategories and hideCollectedPinsProvider to SharedPreferences across sessions', () async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+
+      final container1 = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+        ],
+      );
+
+      // Initial defaults in session 1
+      expect(
+        container1.read(mapFilterProvider).enabledSubcategories,
+        equals(MapFilterState.defaultInitialSubcategories),
+      );
+      expect(container1.read(hideCollectedPinsProvider), isFalse);
+
+      // Modify filters and hideCollectedPins in session 1
+      container1.read(mapFilterProvider.notifier).toggleCategoryGroup('collectibles');
+      container1.read(hideCollectedPinsProvider.notifier).state = true;
+
+      expect(
+        prefs.getStringList(MapFilterNotifier.kEnabledSubcategoriesPrefKey)?.toSet(),
+        containsAll(['properties', 'safehouses', 'ammunation', 'spaceship_parts']),
+      );
+      expect(prefs.getBool(MapFilterNotifier.kHideCollectedPinsPrefKey), isTrue);
+
+      // Create a new ProviderContainer simulating app restart (session 2)
+      final container2 = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+        ],
+      );
+
+      expect(container2.read(mapFilterProvider).isCategoryFullyEnabled('services'), isTrue);
+      expect(container2.read(mapFilterProvider).isCategoryFullyEnabled('collectibles'), isTrue);
+      expect(container2.read(mapFilterProvider).isCategoryFullyEnabled('stunts'), isFalse);
+      expect(container2.read(hideCollectedPinsProvider), isTrue);
     });
   });
 

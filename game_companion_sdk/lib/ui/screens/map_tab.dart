@@ -91,10 +91,31 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
 
     if (target.poiId != null && target.shakeAndOpenCard) {
       _triggerMarkerShakeAndInfoCard(target.poiId!);
+    } else if (target.poiId != null) {
+      final pois = ref.read(mapPoiProvider).valueOrNull ?? [];
+      final targetPoi = pois.cast<MapPointOfInterest?>().firstWhere(
+        (p) => p?.id == target.poiId,
+        orElse: () => null,
+      );
+      if (targetPoi != null) {
+        ref.read(selectedPoiProvider.notifier).state = targetPoi;
+      }
     }
   }
 
-  Future<void> _triggerMarkerShakeAndInfoCard(String poiId) async {
+  Future<void> _triggerMarkerShakeAndInfoCard(String poiId) {
+    return _triggerMarkerShake(
+      poiId,
+      openCardOnComplete: true,
+      preserveHighlight: false,
+    );
+  }
+
+  Future<void> _triggerMarkerShake(
+    String poiId, {
+    required bool openCardOnComplete,
+    bool preserveHighlight = false,
+  }) async {
     final int currentSequence = ++_shakeSequence;
     if (_shakeController.isAnimating) {
       _shakeController.stop();
@@ -128,8 +149,9 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
     if (targetPoi == null) return;
 
     ref.read(mapFilterProvider.notifier).enableSubcategory(targetPoi.subCategory);
+    ref.read(selectedPoiProvider.notifier).state = targetPoi;
     // Keep original map item icon instead of changing it to target symbol (Icons.my_location)
-    if (ref.read(highlightedPoiProvider) != null) {
+    if (!preserveHighlight && ref.read(highlightedPoiProvider) != null) {
       ref.read(highlightedPoiProvider.notifier).state = null;
     }
 
@@ -162,7 +184,9 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
       });
     }
 
-    _showPoiDetails(context, ref, targetPoi);
+    if (openCardOnComplete) {
+      _showPoiDetails(context, ref, targetPoi);
+    }
   }
 
   @override
@@ -186,6 +210,7 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
     final poiAsyncValue = ref.watch(mapPoiProvider);
     final activeLayer = ref.watch(activeMapLayerProvider);
     final hideCollected = ref.watch(hideCollectedPinsProvider);
+    final selectedPoi = ref.watch(selectedPoiProvider);
     final highlightedPoi = ref.watch(highlightedPoiProvider);
     final completionSummary = ref.watch(mapCompletionSummaryProvider);
 
@@ -194,20 +219,39 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
         data: (pois) {
           final filteredPois = pois.where((poi) {
             final isCollected = collectedState.contains(poi.id);
-            final isTargeted = _shakingPoiId == poi.id || highlightedPoi?.id == poi.id;
+            final isTargeted = _shakingPoiId == poi.id ||
+                highlightedPoi?.id == poi.id ||
+                selectedPoi?.id == poi.id;
             return isTargeted || (filterState.isSubcategoryEnabled(poi.subCategory) &&
                 (!hideCollected || !isCollected));
           }).toList();
 
+          int getMarkerSortPriority(MapPointOfInterest poi) {
+            final isSel = selectedPoi?.id == poi.id;
+            final isHigh = highlightedPoi?.id == poi.id;
+            final isShak = _shakingPoiId == poi.id;
+            if (isShak && (isSel || isHigh)) return 3;
+            if (isSel || isHigh) return 2;
+            if (isShak) return 1;
+            return 0;
+          }
+
+          filteredPois.sort(
+            (a, b) => getMarkerSortPriority(a).compareTo(getMarkerSortPriority(b)),
+          );
+
           final markers = filteredPois.map((poi) {
             final isCollected = collectedState.contains(poi.id);
+            final isSelected = selectedPoi?.id == poi.id;
             final isHighlighted = highlightedPoi?.id == poi.id;
+            final isSelectedOrHighlighted = isSelected || isHighlighted;
             final isShaking = _shakingPoiId == poi.id;
             final style = getPoiStyle(poi);
 
-            final markerColor = isHighlighted ? Colors.amber : style.color;
-            final markerIcon = isHighlighted ? Icons.my_location : style.icon;
-            final markerSize = isHighlighted ? 48.0 : 40.0;
+            final markerColor = style.color;
+            final markerIcon = style.icon;
+            final markerSize = isSelectedOrHighlighted ? 50.0 : 40.0;
+            final iconSize = isSelectedOrHighlighted ? 26.0 : 22.0;
 
             return Marker(
               point: inGameToMapCoords(poi.gameX, poi.gameY),
@@ -217,6 +261,10 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
                 key: Key('map_marker_${poi.id}'),
                 onTap: () {
                   _cancelShake();
+                  ref.read(selectedPoiProvider.notifier).state = poi;
+                  if (ref.read(highlightedPoiProvider)?.id != poi.id) {
+                    ref.read(highlightedPoiProvider.notifier).state = null;
+                  }
                   _showPoiDetails(context, ref, poi);
                 },
                 child: Opacity(
@@ -228,17 +276,23 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
                         decoration: BoxDecoration(
                           color: markerColor,
                           shape: BoxShape.circle,
-                          boxShadow: isHighlighted
+                          boxShadow: isSelectedOrHighlighted
                               ? [
                                   BoxShadow(
-                                    color: Colors.amber.withValues(alpha: 0.8),
-                                    blurRadius: 10,
-                                    spreadRadius: 2,
+                                    color: markerColor.withValues(alpha: 0.85),
+                                    blurRadius: isHighlighted ? 14 : 12,
+                                    spreadRadius: isHighlighted ? 4 : 3,
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white.withValues(
+                                        alpha: isHighlighted ? 0.75 : 0.5),
+                                    blurRadius: 6,
+                                    spreadRadius: isHighlighted ? 2 : 1,
                                   ),
                                 ]
                               : null,
-                          border: isHighlighted
-                              ? Border.all(color: Colors.white, width: 2.5)
+                          border: isSelectedOrHighlighted
+                              ? Border.all(color: Colors.white, width: 3)
                               : null,
                         ),
                         child: Center(
@@ -247,13 +301,13 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
                                   key: Key('shaking_marker_icon_${poi.id}'),
                                   icon: markerIcon,
                                   color: Colors.white,
-                                  size: isHighlighted ? 24 : 22,
+                                  size: iconSize,
                                   animation: _shakeController,
                                 )
                               : Icon(
                                   markerIcon,
                                   color: Colors.white,
-                                  size: isHighlighted ? 24 : 22,
+                                  size: iconSize,
                                 ),
                         ),
                       ),
@@ -287,6 +341,15 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
                 markers: markers,
                 bounds: kGtaMapPanBounds,
                 initialCenter: kGtaMapCenter,
+                onTap: (_, _) {
+                  _cancelShake();
+                  if (ref.read(selectedPoiProvider) != null) {
+                    ref.read(selectedPoiProvider.notifier).state = null;
+                  }
+                  if (ref.read(highlightedPoiProvider) != null) {
+                    ref.read(highlightedPoiProvider.notifier).state = null;
+                  }
+                },
               ),
 
               // Top Controls Header: Filters & Telemetry Summary
@@ -372,6 +435,66 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
                   },
                 ),
               ),
+
+              // Empty-Filter Helper State
+              if (filterState.enabledSubcategories.isEmpty)
+                Positioned(
+                  bottom: 16,
+                  left: 72,
+                  right: 84,
+                  child: Center(
+                    child: Card(
+                      key: const Key('empty_filter_helper_card'),
+                      color: const Color(0xFF2A2831).withValues(alpha: 0.95),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 6),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.visibility_off_outlined,
+                              size: 16,
+                              color: Colors.white70,
+                            ),
+                            const SizedBox(width: 8),
+                            const Flexible(
+                              child: Text(
+                                'All pins hidden — select a category above or tap Filters',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            TextButton(
+                              key: const Key('reset_default_filters_button'),
+                              style: TextButton.styleFrom(
+                                foregroundColor: const Color(0xFFD0BCFF),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed: () {
+                                ref
+                                    .read(mapFilterProvider.notifier)
+                                    .resetToDefaults();
+                              },
+                            child: const Text('Reset Defaults'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           );
         },
@@ -379,6 +502,7 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
         error: (error, stackTrace) => Center(child: Text('Error: $error')),
       ),
       floatingActionButton: FloatingActionButton(
+        key: const Key('map_category_filter'),
         heroTag: 'map_category_filter',
         child: const Icon(Icons.filter_list),
         onPressed: () {
@@ -620,253 +744,258 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
               builder: (context, scrollController) {
                 return Container(
                   padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-                  child: ListView(
-                    controller: scrollController,
+                  child: Column(
                     children: [
-                      // Header with Title and Close
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Map Filters & Progress',
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: ListView(
+                          controller: scrollController,
+                          children: [
+                            // Header with Title and Close
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Map Filters & Progress',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.pop(ctx),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
+                                IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () => Navigator.pop(ctx),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
 
-                      // Quick Actions: Select All, Clear All
-                      Row(
-                        children: [
-                          OutlinedButton.icon(
-                            icon: const Icon(Icons.select_all, size: 16),
-                            label: const Text('Select All'),
-                            onPressed: () {
-                              filterNotifier.enableAll();
-                            },
-                          ),
-                          const SizedBox(width: 8),
-                          OutlinedButton.icon(
-                            icon: const Icon(Icons.deselect, size: 16),
-                            label: const Text('Clear All'),
-                            onPressed: () {
-                              filterNotifier.disableAll();
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
+                            // Quick Actions: Select All, Clear All
+                            Row(
+                              children: [
+                                OutlinedButton.icon(
+                                  icon: const Icon(Icons.select_all, size: 16),
+                                  label: const Text('Select All'),
+                                  onPressed: () {
+                                    filterNotifier.enableAll();
+                                  },
+                                ),
+                                const SizedBox(width: 8),
+                                OutlinedButton.icon(
+                                  icon: const Icon(Icons.deselect, size: 16),
+                                  label: const Text('Clear All'),
+                                  onPressed: () {
+                                    filterNotifier.disableAll();
+                                  },
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
 
-                      // Global Hide Collected Switch
-                      SwitchListTile(
-                        title: const Text('Hide Collected Pins'),
-                        subtitle: const Text('Dim or hide completed collectibles'),
-                        value: hideCollected,
-                        contentPadding: EdgeInsets.zero,
-                        onChanged: (val) {
-                          ref.read(hideCollectedPinsProvider.notifier).state = val;
-                        },
-                      ),
-                      const Divider(height: 20),
+                            // Global Hide Collected Switch
+                            SwitchListTile(
+                              title: const Text('Hide Collected Pins'),
+                              subtitle: const Text('Dim or hide completed collectibles'),
+                              value: hideCollected,
+                              contentPadding: EdgeInsets.zero,
+                              onChanged: (val) {
+                                ref.read(hideCollectedPinsProvider.notifier).state = val;
+                              },
+                            ),
+                            const Divider(height: 20),
 
-                      // Collapsible accordion groups (ExpansionTile) for the 4 main categories
-                      ...canonicalGroups.map((catKey) {
-                        final catStats = completionSummary.categoryStats.firstWhere(
-                          (c) => c.category == catKey,
-                          orElse: () => CategoryCompletionStats(
-                            category: catKey,
-                            displayName: getCategoryDisplayName(catKey),
-                            totalCount: 0,
-                            collectedCount: 0,
-                            subcategoryStats: [],
-                          ),
-                        );
-
-                        final isFullyEnabled = filterState.isCategoryFullyEnabled(catKey);
-                        final isPartiallyEnabled = filterState.isCategoryPartiallyEnabled(catKey);
-
-                        // Use existing subcategory stats if available, or fallback to schema definitions
-                        final subcategories = catStats.subcategoryStats.isNotEmpty
-                            ? catStats.subcategoryStats
-                            : MapFilterState.getSubcategoriesForCategory(catKey).map((subKey) {
-                                return SubcategoryCompletionStats(
-                                  subCategory: subKey,
-                                  displayName: getSubcategoryDisplayName(subKey),
+                            // Collapsible accordion groups (ExpansionTile) for the 4 main categories
+                            ...canonicalGroups.map((catKey) {
+                              final catStats = completionSummary.categoryStats.firstWhere(
+                                (c) => c.category == catKey,
+                                orElse: () => CategoryCompletionStats(
+                                  category: catKey,
+                                  displayName: getCategoryDisplayName(catKey),
                                   totalCount: 0,
                                   collectedCount: 0,
-                                  isCollectable: true,
-                                );
-                              }).toList();
+                                  subcategoryStats: [],
+                                ),
+                              );
 
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
-                              color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
-                            ),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: ExpansionTile(
-                            key: PageStorageKey<String>('group_$catKey'),
-                            initiallyExpanded: true,
-                            leading: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                _getCategoryIcon(catKey),
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 22,
-                              ),
-                            ),
-                            title: Text(
-                              catStats.displayName,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            subtitle: Padding(
-                              padding: const EdgeInsets.only(top: 4, bottom: 4),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        catStats.totalCount > 0
-                                            ? '${catStats.collectedCount}/${catStats.totalCount} completed'
-                                            : '${subcategories.length} subcategories',
-                                        style: Theme.of(context).textTheme.bodySmall,
-                                      ),
-                                      if (catStats.totalCount > 0)
-                                        Text(
-                                          '${(catStats.percentage * 100).toInt()}%',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall
-                                              ?.copyWith(fontWeight: FontWeight.w600),
-                                        ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  LinearProgressIndicator(
-                                    value: catStats.percentage,
-                                    minHeight: 4,
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            trailing: Tooltip(
-                              message: isFullyEnabled
-                                  ? 'Disable all in ${catStats.displayName}'
-                                  : 'Enable all in ${catStats.displayName}',
-                              child: Switch(
-                                value: isFullyEnabled || isPartiallyEnabled,
-                                onChanged: (val) {
-                                  filterNotifier.toggleCategoryGroup(catKey);
-                                },
-                              ),
-                            ),
-                            children: subcategories.map((subcat) {
-                              final style = getPoiStyleForSubcategory(subcat.subCategory);
-                              final isEnabled =
-                                  filterState.isSubcategoryEnabled(subcat.subCategory);
+                              final isFullyEnabled = filterState.isCategoryFullyEnabled(catKey);
+                              final isPartiallyEnabled = filterState.isCategoryPartiallyEnabled(catKey);
 
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                      color: Theme.of(context)
-                                          .dividerColor
-                                          .withValues(alpha: 0.15),
-                                    ),
+                              // Use existing subcategory stats if available, or fallback to schema definitions
+                              final subcategories = catStats.subcategoryStats.isNotEmpty
+                                  ? catStats.subcategoryStats
+                                  : MapFilterState.getSubcategoriesForCategory(catKey).map((subKey) {
+                                      return SubcategoryCompletionStats(
+                                        subCategory: subKey,
+                                        displayName: getSubcategoryDisplayName(subKey),
+                                        totalCount: 0,
+                                        collectedCount: 0,
+                                        isCollectable: true,
+                                      );
+                                    }).toList();
+
+                              return Card(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  side: BorderSide(
+                                    color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
                                   ),
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
+                                clipBehavior: Clip.antiAlias,
+                                child: ExpansionTile(
+                                  key: PageStorageKey<String>('group_$catKey'),
+                                  initiallyExpanded: true,
+                                  leading: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withValues(alpha: 0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      _getCategoryIcon(catKey),
+                                      color: Theme.of(context).colorScheme.primary,
+                                      size: 22,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    catStats.displayName,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
+                                  subtitle: Padding(
+                                    padding: const EdgeInsets.only(top: 4, bottom: 4),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: style.color.withValues(alpha: 0.15),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Icon(style.icon,
-                                              color: style.color, size: 18),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              catStats.totalCount > 0
+                                                  ? '${catStats.collectedCount}/${catStats.totalCount} completed'
+                                                  : '${subcategories.length} subcategories',
+                                              style: Theme.of(context).textTheme.bodySmall,
+                                            ),
+                                            if (catStats.totalCount > 0)
                                               Text(
-                                                subcat.displayName,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 14),
-                                              ),
-                                              const SizedBox(height: 2),
-                                              Text(
-                                                subcat.isCollectable
-                                                    ? '${subcat.collectedCount}/${subcat.totalCount} collected (${subcat.remainingCount} left)'
-                                                    : '${subcat.totalCount} locations available',
+                                                '${(catStats.percentage * 100).toInt()}%',
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .bodySmall,
+                                                    .bodySmall
+                                                    ?.copyWith(fontWeight: FontWeight.w600),
                                               ),
-                                            ],
-                                          ),
+                                          ],
                                         ),
-                                        Switch(
-                                          value: isEnabled,
-                                          onChanged: (val) {
-                                            filterNotifier
-                                                .toggleSubcategory(subcat.subCategory);
-                                          },
+                                        const SizedBox(height: 4),
+                                        LinearProgressIndicator(
+                                          value: catStats.percentage,
+                                          minHeight: 4,
+                                          borderRadius: BorderRadius.circular(2),
                                         ),
                                       ],
                                     ),
-                                    if (subcat.isCollectable && subcat.totalCount > 0) ...[
-                                      const SizedBox(height: 6),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(2),
-                                        child: LinearProgressIndicator(
-                                          value: subcat.percentage,
-                                          minHeight: 4,
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .surfaceContainerHighest,
-                                          valueColor: AlwaysStoppedAnimation<Color>(
-                                              style.color),
+                                  ),
+                                  trailing: Tooltip(
+                                    message: isFullyEnabled
+                                        ? 'Disable all in ${catStats.displayName}'
+                                        : 'Enable all in ${catStats.displayName}',
+                                    child: Switch(
+                                      value: isFullyEnabled || isPartiallyEnabled,
+                                      onChanged: (val) {
+                                        filterNotifier.toggleCategoryGroup(catKey);
+                                      },
+                                    ),
+                                  ),
+                                  children: subcategories.map((subcat) {
+                                    final style = getPoiStyleForSubcategory(subcat.subCategory);
+                                    final isEnabled =
+                                        filterState.isSubcategoryEnabled(subcat.subCategory);
+
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          top: BorderSide(
+                                            color: Theme.of(context)
+                                                .dividerColor
+                                                .withValues(alpha: 0.15),
+                                          ),
                                         ),
                                       ),
-                                    ],
-                                  ],
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.all(6),
+                                                decoration: BoxDecoration(
+                                                  color: style.color.withValues(alpha: 0.15),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: Icon(style.icon,
+                                                    color: style.color, size: 18),
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      subcat.displayName,
+                                                      style: const TextStyle(
+                                                          fontWeight: FontWeight.w600,
+                                                          fontSize: 14),
+                                                    ),
+                                                    const SizedBox(height: 2),
+                                                    Text(
+                                                      subcat.isCollectable
+                                                          ? '${subcat.collectedCount}/${subcat.totalCount} collected (${subcat.remainingCount} left)'
+                                                          : '${subcat.totalCount} locations available',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Switch(
+                                                value: isEnabled,
+                                                onChanged: (val) {
+                                                  filterNotifier
+                                                      .toggleSubcategory(subcat.subCategory);
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                          if (subcat.isCollectable && subcat.totalCount > 0) ...[
+                                            const SizedBox(height: 6),
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.circular(2),
+                                              child: LinearProgressIndicator(
+                                                value: subcat.percentage,
+                                                minHeight: 4,
+                                                backgroundColor: Theme.of(context)
+                                                    .colorScheme
+                                                    .surfaceContainerHighest,
+                                                valueColor: AlwaysStoppedAnimation<Color>(
+                                                    style.color),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
                               );
-                            }).toList(),
-                          ),
-                        );
-                      }),
-
+                            }),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       SizedBox(
                         width: double.infinity,
@@ -889,6 +1018,9 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
   void _showPoiDetails(BuildContext context, WidgetRef ref, MapPointOfInterest poi) {
     final hostContext = mounted ? this.context : context;
     final hostRef = this.ref;
+    if (hostRef.read(selectedPoiProvider)?.id != poi.id) {
+      hostRef.read(selectedPoiProvider.notifier).state = poi;
+    }
 
     showModalBottomSheet(
       context: hostContext,
@@ -1067,10 +1199,19 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
                               nearest.gameX,
                               nearest.gameY,
                             );
-                            ref.read(highlightedPoiProvider.notifier).state = nearest;
+                            hostRef
+                                .read(mapFilterProvider.notifier)
+                                .enableSubcategory(nearest.subCategory);
+                            hostRef.read(selectedPoiProvider.notifier).state = nearest;
+                            hostRef.read(highlightedPoiProvider.notifier).state = nearest;
                             final target =
                                 inGameToMapCoords(nearest.gameX, nearest.gameY);
                             _mapController.move(target, 4.5);
+                            _triggerMarkerShake(
+                              nearest.id,
+                              openCardOnComplete: false,
+                              preserveHighlight: true,
+                            );
 
                             final messenger = ScaffoldMessenger.of(hostContext);
                             messenger.hideCurrentSnackBar();
@@ -1132,6 +1273,8 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
                                     _cancelShake();
                                     messenger.hideCurrentSnackBar();
                                     if (mounted) {
+                                      hostRef.read(selectedPoiProvider.notifier).state =
+                                          nearest;
                                       _mapController.move(target, 4.5);
                                       _showPoiDetails(hostContext, hostRef, nearest);
                                     }
@@ -1203,8 +1346,8 @@ class _MapTabState extends ConsumerState<MapTab> with SingleTickerProviderStateM
           Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
           const SizedBox(width: 8),
           Expanded(
-            child: RichText(
-              text: TextSpan(
+            child: Text.rich(
+              TextSpan(
                 style: Theme.of(context).textTheme.bodySmall,
                 children: [
                   TextSpan(

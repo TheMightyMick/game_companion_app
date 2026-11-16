@@ -207,9 +207,11 @@ def run_tests():
         pois = json.load(f)
 
     # State class simulation mirroring Dart MapFilterState
+    DEFAULT_INITIAL_SUBCATEGORIES = {'properties', 'safehouses', 'ammunation'}
+
     class SimFilterState:
         def __init__(self, enabled=None):
-            self.enabled = set(enabled) if enabled is not None else set(ALL_SUBCATEGORIES)
+            self.enabled = set(enabled) if enabled is not None else set(DEFAULT_INITIAL_SUBCATEGORIES)
 
         def is_subcategory_enabled(self, sub):
             return sub in self.enabled
@@ -247,14 +249,23 @@ def run_tests():
         def disable_all(self):
             return SimFilterState([])
 
+        def reset_to_defaults(self):
+            return SimFilterState(DEFAULT_INITIAL_SUBCATEGORIES)
+
     state = SimFilterState()
-    # 3.1 Initial state
-    for sub in ALL_SUBCATEGORIES:
+    # 3.1 Initial state (Services only by default)
+    for sub in DEFAULT_INITIAL_SUBCATEGORIES:
         assert state.is_subcategory_enabled(sub), f"Expected {sub} to be enabled initially"
+    assert state.is_category_fully_enabled("services"), "Expected services to be fully enabled initially"
+    assert not state.is_category_fully_enabled("collectibles"), "Expected collectibles to be disabled initially"
+    print("  ✓ Initial state: Services subcategories enabled by default; enable_all() enables all 14 subcategories")
+
+    state = state.enable_all()
+    for sub in ALL_SUBCATEGORIES:
+        assert state.is_subcategory_enabled(sub), f"Expected {sub} to be enabled after enable_all()"
     for cat in CANONICAL_CATEGORIES:
-        assert state.is_category_fully_enabled(cat), f"Expected {cat} to be fully enabled initially"
-        assert not state.is_category_partially_enabled(cat), f"Expected {cat} not to be partially enabled initially"
-    print("  ✓ Initial state: All 14 subcategories enabled, all groups fully enabled")
+        assert state.is_category_fully_enabled(cat), f"Expected {cat} to be fully enabled after enable_all()"
+        assert not state.is_category_partially_enabled(cat), f"Expected {cat} not to be partially enabled"
 
     # 3.2 Independent toggling
     state = state.toggle_subcategory("spaceship_parts")

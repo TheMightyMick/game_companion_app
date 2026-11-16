@@ -161,6 +161,7 @@ void main() {
         mapPoiProvider.overrideWith((ref) => Future.value(testPois)),
       ],
     );
+    container.read(mapFilterProvider.notifier).enableAll();
 
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -273,6 +274,7 @@ void main() {
         wikiItemsProvider.overrideWith((ref) => Future.value([])),
       ],
     );
+    container.read(mapFilterProvider.notifier).enableAll();
 
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -418,6 +420,7 @@ void main() {
         wikiItemsProvider.overrideWith((ref) => Future.value([])),
       ],
     );
+    container.read(mapFilterProvider.notifier).enableAll();
 
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -527,6 +530,7 @@ void main() {
         wikiItemsProvider.overrideWith((ref) => Future.value([])),
       ],
     );
+    container.read(mapFilterProvider.notifier).enableAll();
 
     await tester.pumpWidget(
       UncontrolledProviderScope(
@@ -876,7 +880,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Filter sheet is open
-    expect(find.text('Map Filters'), findsOneWidget);
+    expect(find.textContaining('Map Filters'), findsOneWidget);
 
     // Advance past shake duration
     await tester.pump(const Duration(milliseconds: 1000));
@@ -884,7 +888,7 @@ void main() {
 
     // Target POI card must NOT open over the filter sheet
     expect(find.text('Target Before Filter'), findsNothing);
-    expect(find.text('Map Filters'), findsOneWidget);
+    expect(find.textContaining('Map Filters'), findsOneWidget);
   });
 
   testWidgets('MapTab targeted marker displays original map item icon instead of target symbol', (WidgetTester tester) async {
@@ -966,9 +970,227 @@ void main() {
         name: 'Submarine Piece #02 - Paleto Cove',
         category: 'collectibles',
         subCategory: 'submarine_pieces',
-        gameX: -150.0,
-        gameY: 250.0,
+        gameX: 1200.0,
+        gameY: 1500.0,
         description: 'Paleto Cove Propeller Assembly',
+        isCollectable: true,
+      ),
+    ];
+
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        poiProvider.overrideWith((ref) => Future.value(testPois)),
+        mapPoiProvider.overrideWith((ref) => Future.value(testPois)),
+        wikiItemsProvider.overrideWith((ref) => Future.value([])),
+      ],
+    );
+    container.read(mapFilterProvider.notifier).enableAll();
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(body: MapTab()),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    // Tap first marker to open its info card
+    await tester.tap(find.byKey(const Key('map_marker_sub_piece_1')));
+    await tester.pumpAndSettle();
+
+    // First POI details sheet is open
+    expect(find.text('Submarine Piece #01'), findsOneWidget);
+    expect(find.text('Find Next Closest'), findsOneWidget);
+
+    // Tap 'Find Next Closest'
+    await tester.tap(find.text('Find Next Closest'));
+    await tester.pump();
+
+    // Nearest POI is set as both selected and highlighted, and begins shaking immediately
+    expect(container.read(selectedPoiProvider)?.id, 'sub_piece_2');
+    expect(container.read(highlightedPoiProvider)?.id, 'sub_piece_2');
+    expect(find.byKey(const Key('shaking_marker_icon_sub_piece_2')), findsOneWidget);
+    // Original subcategory icon (Icons.sailing) and color (0xFF00B0FF) are preserved; Icons.my_location & Colors.amber are never used
+    expect(find.byIcon(Icons.my_location), findsNothing);
+    expect(find.byIcon(Icons.sailing), findsWidgets);
+    final highlightedContainer = tester.widget<Container>(
+      find.descendant(
+        of: find.byKey(const Key('map_marker_sub_piece_2')),
+        matching: find.byType(Container),
+      ).first,
+    );
+    final highlightedDeco = highlightedContainer.decoration as BoxDecoration;
+    expect(highlightedDeco.color, const Color(0xFF00B0FF));
+    expect(highlightedDeco.color, isNot(equals(Colors.amber)));
+    expect((highlightedDeco.border as Border).top.color, Colors.white);
+    expect((highlightedDeco.border as Border).top.width, 3.0);
+    expect(highlightedDeco.boxShadow, isNotNull);
+    expect(highlightedDeco.boxShadow!.length, greaterThanOrEqualTo(2));
+
+    await tester.pumpAndSettle();
+
+    // The first bottom sheet should now be closed
+    expect(find.text('First piece in Paleto Bay'), findsNothing);
+
+    // Floating SnackBar must be displayed with 'View' action
+    expect(find.text('Submarine Piece #02 - Paleto Cove'), findsOneWidget);
+    expect(find.textContaining('Targeted closest (~'), findsOneWidget);
+    expect(find.text('View'), findsOneWidget);
+    final snackBarFinder = find.byType(SnackBar);
+    expect(snackBarFinder, findsOneWidget);
+    final snackBar = tester.widget<SnackBar>(snackBarFinder);
+    expect(snackBar.behavior, SnackBarBehavior.floating);
+
+    // Tap 'View' on the SnackBar
+    await tester.tap(find.text('View'));
+    await tester.pumpAndSettle();
+
+    // The nearest POI details sheet must now be open!
+    expect(find.text('Submarine Piece #02 - Paleto Cove'), findsOneWidget);
+    expect(find.text('Paleto Cove Propeller Assembly'), findsOneWidget);
+  });
+
+  testWidgets('Selected marker enlarges, shows white border & halo, renders on top in MarkerLayer, and clears on empty map tap', (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+
+    final testPois = [
+      MapPointOfInterest(
+        id: 'cluster_poi_1',
+        name: 'Cluster Spaceship Part',
+        category: 'collectibles',
+        subCategory: 'spaceship_parts',
+        gameX: 100.0,
+        gameY: 100.0,
+        description: 'First overlapping POI',
+        isCollectable: true,
+      ),
+      MapPointOfInterest(
+        id: 'cluster_poi_2',
+        name: 'Cluster Letter Scrap',
+        category: 'collectibles',
+        subCategory: 'letter_scraps',
+        gameX: 102.0,
+        gameY: 102.0,
+        description: 'Second overlapping POI',
+        isCollectable: true,
+      ),
+    ];
+
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        poiProvider.overrideWith((ref) => Future.value(testPois)),
+        mapPoiProvider.overrideWith((ref) => Future.value(testPois)),
+        wikiItemsProvider.overrideWith((ref) => Future.value([])),
+      ],
+    );
+    container.read(mapFilterProvider.notifier).enableAll();
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const MaterialApp(
+          home: Scaffold(body: MapTab()),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    // Initially no POI is selected and both markers are 40x40 in original order
+    expect(container.read(selectedPoiProvider), isNull);
+    var markerLayer = tester.widget<MarkerLayer>(find.byType(MarkerLayer));
+    expect(markerLayer.markers.length, 2);
+    expect(markerLayer.markers[0].width, 40.0);
+    expect(markerLayer.markers[1].width, 40.0);
+    expect((markerLayer.markers[0].child as GestureDetector).key, const Key('map_marker_cluster_poi_1'));
+    expect((markerLayer.markers[1].child as GestureDetector).key, const Key('map_marker_cluster_poi_2'));
+
+    // Because cluster_poi_2 (40x40) overlaps cluster_poi_1 (100,100 vs 102,102) before selection,
+    // invoke cluster_poi_1's onTap to select it, then verify it moves to the top (last in MarkerLayer)
+    // and can now be directly hit-tested via tester.tap!
+    tester.widget<GestureDetector>(find.byKey(const Key('map_marker_cluster_poi_1'))).onTap!();
+    await tester.pumpAndSettle();
+
+    // Dismiss the detail bottom sheet so we can inspect the map state
+    Navigator.of(tester.element(find.text('Cluster Spaceship Part'))).pop();
+    await tester.pumpAndSettle();
+
+    // cluster_poi_1 remains selected on the map
+    expect(container.read(selectedPoiProvider)?.id, 'cluster_poi_1');
+
+    // Verify cluster_poi_1 is sorted LAST in MarkerLayer (renders on top of overlapping markers) and enlarged to 50x50
+    markerLayer = tester.widget<MarkerLayer>(find.byType(MarkerLayer));
+    expect((markerLayer.markers.first.child as GestureDetector).key, const Key('map_marker_cluster_poi_2'));
+    expect(markerLayer.markers.first.width, 40.0);
+    expect((markerLayer.markers.last.child as GestureDetector).key, const Key('map_marker_cluster_poi_1'));
+    expect(markerLayer.markers.last.width, 50.0);
+    expect(markerLayer.markers.last.height, 50.0);
+
+    // Because cluster_poi_1 is now rendered on top of cluster_poi_2, a direct screen tap hits cluster_poi_1 cleanly!
+    await tester.tap(find.byKey(const Key('map_marker_cluster_poi_1')));
+    await tester.pumpAndSettle();
+    expect(find.text('Cluster Spaceship Part'), findsOneWidget);
+    Navigator.of(tester.element(find.text('Cluster Spaceship Part'))).pop();
+    await tester.pumpAndSettle();
+
+    // Verify white border (width 3) and halo BoxShadow while keeping original subcategory color (not Colors.amber)
+    final markerContainer = tester.widget<Container>(
+      find.descendant(
+        of: find.byKey(const Key('map_marker_cluster_poi_1')),
+        matching: find.byType(Container),
+      ).first,
+    );
+    final decoration = markerContainer.decoration as BoxDecoration;
+    expect(decoration.color, isNot(equals(Colors.amber)));
+    expect(decoration.border, isNotNull);
+    expect((decoration.border as Border).top.color, Colors.white);
+    expect((decoration.border as Border).top.width, 3.0);
+    expect(decoration.boxShadow, isNotNull);
+    expect(decoration.boxShadow!.isNotEmpty, isTrue);
+
+    // Simulate tapping empty map space via FlutterMap.options.onTap
+    final flutterMap = tester.widget<FlutterMap>(find.byType(FlutterMap));
+    flutterMap.options.onTap?.call(
+      const TapPosition(Offset.zero, Offset.zero),
+      inGameToMapCoords(0, 0),
+    );
+    await tester.pump();
+
+    // Selection is cleared and marker returns to 40x40
+    expect(container.read(selectedPoiProvider), isNull);
+    markerLayer = tester.widget<MarkerLayer>(find.byType(MarkerLayer));
+    expect(markerLayer.markers.every((m) => m.width == 40.0), isTrue);
+  });
+
+  testWidgets('MapTab starts with only Services enabled by default and shows empty-filter helper card with Reset Defaults when all filters are cleared', (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+
+    final testPois = [
+      MapPointOfInterest(
+        id: 'safehouse_1',
+        name: 'Franklin Safehouse',
+        category: 'services',
+        subCategory: 'safehouses',
+        gameX: -50.0,
+        gameY: -100.0,
+        description: 'Starting safehouse',
+        isCollectable: false,
+      ),
+      MapPointOfInterest(
+        id: 'collectible_1',
+        name: 'Spaceship Part 1',
+        category: 'collectibles',
+        subCategory: 'spaceship_parts',
+        gameX: 500.0,
+        gameY: 600.0,
+        description: 'Hidden part',
         isCollectable: true,
       ),
     ];
@@ -993,35 +1215,28 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    // Tap first marker to open its info card
-    await tester.tap(find.byKey(const Key('map_marker_sub_piece_1')));
-    await tester.pumpAndSettle();
+    // By default, only 'services' (safehouse_1) is rendered; collectible_1 is hidden
+    expect(find.byKey(const Key('map_marker_safehouse_1')), findsOneWidget);
+    expect(find.byKey(const Key('map_marker_collectible_1')), findsNothing);
+    expect(find.byKey(const Key('empty_filter_helper_card')), findsNothing);
 
-    // First POI details sheet is open
-    expect(find.text('Submarine Piece #01'), findsOneWidget);
-    expect(find.text('Find Next Closest'), findsOneWidget);
+    // Clear all filters
+    container.read(mapFilterProvider.notifier).disableAll();
+    await tester.pump();
 
-    // Tap 'Find Next Closest'
-    await tester.tap(find.text('Find Next Closest'));
-    await tester.pumpAndSettle();
+    // All markers are hidden and the empty-filter helper card is visible
+    expect(find.byKey(const Key('map_marker_safehouse_1')), findsNothing);
+    expect(find.byKey(const Key('empty_filter_helper_card')), findsOneWidget);
+    expect(find.text('All pins hidden — select a category above or tap Filters'), findsOneWidget);
+    expect(find.text('Reset Defaults'), findsOneWidget);
 
-    // The first bottom sheet should now be closed
-    expect(find.text('First piece in Paleto Bay'), findsNothing);
+    // Tap 'Reset Defaults'
+    await tester.tap(find.byKey(const Key('reset_default_filters_button')));
+    await tester.pump();
 
-    // Floating SnackBar must be displayed with 'View' action
-    expect(find.text('Submarine Piece #02 - Paleto Cove'), findsOneWidget);
-    expect(find.text('View'), findsOneWidget);
-    final snackBarFinder = find.byType(SnackBar);
-    expect(snackBarFinder, findsOneWidget);
-    final snackBar = tester.widget<SnackBar>(snackBarFinder);
-    expect(snackBar.behavior, SnackBarBehavior.floating);
-
-    // Tap 'View' on the SnackBar
-    await tester.tap(find.text('View'));
-    await tester.pumpAndSettle();
-
-    // The nearest POI details sheet must now be open!
-    expect(find.text('Submarine Piece #02 - Paleto Cove'), findsOneWidget);
-    expect(find.text('Paleto Cove Propeller Assembly'), findsOneWidget);
+    // Services markers are restored and the empty-filter helper card is hidden
+    expect(find.byKey(const Key('empty_filter_helper_card')), findsNothing);
+    expect(find.byKey(const Key('map_marker_safehouse_1')), findsOneWidget);
+    expect(find.byKey(const Key('map_marker_collectible_1')), findsNothing);
   });
 }

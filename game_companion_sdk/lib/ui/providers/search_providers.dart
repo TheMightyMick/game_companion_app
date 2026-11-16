@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../sdk/models/guide_article.dart';
 import '../../sdk/models/search_result_item.dart';
 import 'guides_provider.dart';
 import 'map_providers.dart';
@@ -29,7 +28,13 @@ final unifiedSearchResultsProvider = FutureProvider.family<List<SearchResultItem
   // Fetch wiki items
   final wikiItems = await ref.watch(wikiItemsProvider.future);
   for (final item in wikiItems) {
-    if (item.title.toLowerCase().contains(lowerQuery) || item.description.toLowerCase().contains(lowerQuery)) {
+    final matchesTitle = item.title.toLowerCase().contains(lowerQuery);
+    final matchesDesc = item.description.toLowerCase().contains(lowerQuery);
+    final matchesSubCat = item.subCategory?.toLowerCase().contains(lowerQuery) ?? false;
+    final matchesLocations = item.spawnLocations.any((loc) => loc.toLowerCase().contains(lowerQuery));
+    final matchesTips = item.acquisitionTips.any((tip) => tip.toLowerCase().contains(lowerQuery));
+
+    if (matchesTitle || matchesDesc || matchesSubCat || matchesLocations || matchesTips) {
       results.add(SearchResultItem(
         title: item.title,
         subtitle: item.category,
@@ -40,7 +45,12 @@ final unifiedSearchResultsProvider = FutureProvider.family<List<SearchResultItem
   }
 
   // Fetch guides
-  final guides = await ref.watch(guidesProvider.future);
+  final guidesAsync = ref.watch(guidesProvider);
+  final guides = guidesAsync.valueOrNull ??
+      await ref.watch(guidesProvider.future).timeout(
+            const Duration(milliseconds: 50),
+            onTimeout: () => const [],
+          );
   for (final guide in guides) {
     final matchesTitle = guide.title.toLowerCase().contains(lowerQuery);
     final matchesCategory = guide.category.toLowerCase().contains(lowerQuery);
