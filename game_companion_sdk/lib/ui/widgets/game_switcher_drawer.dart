@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../sdk/registry/game_registry.dart';
 import '../../sdk/models/game_manifest.dart';
+import '../providers/onboarding_provider.dart';
 
 class GameSwitcherDrawer extends ConsumerWidget {
   const GameSwitcherDrawer({super.key});
@@ -48,7 +49,10 @@ class GameSwitcherDrawer extends ConsumerWidget {
                       Text(
                         'Select Game',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.8),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer
+                                  .withValues(alpha: 0.8),
                             ),
                       ),
                     ],
@@ -71,6 +75,18 @@ class GameSwitcherDrawer extends ConsumerWidget {
               },
             );
           }),
+          const Divider(),
+          ListTile(
+            key: const Key('drawer_replay_tutorial_tile'),
+            leading: const Icon(Icons.school_outlined),
+            title: const Text('Replay App Tutorial'),
+            subtitle: const Text('Quick tour of Map, Wiki & Guides'),
+            onTap: () {
+              Navigator.of(context).pop();
+              ref.read(onboardingStepProvider.notifier).state = 0;
+              ref.read(onboardingCompletedProvider.notifier).resetOnboarding();
+            },
+          ),
         ],
       ),
     );

@@ -57,7 +57,7 @@ void main() {
         category: 'Weapons',
         stats: {},
         description: 'A standard assault rifle.',
-        thumbnailUrl: 'https://example.com/loading.webp',
+        thumbnailUrl: '',
       )
     ];
 
@@ -65,8 +65,8 @@ void main() {
       ProviderScope(
         overrides: [
           wikiItemsProvider.overrideWith((ref) => Future.value(mockWikiItems)),
-        mapPoiProvider.overrideWith((ref) => Future.value([])),
           mapPoiProvider.overrideWith((ref) => Future.value(mockPois)),
+          guidesProvider.overrideWith((ref) => Future.value([])),
         ],
         child: const MaterialApp(
           home: SearchScreen(query: 'Carbine'),
@@ -84,8 +84,8 @@ void main() {
       ProviderScope(
         overrides: [
           wikiItemsProvider.overrideWith((ref) => Future.value(mockWikiItems)),
-        mapPoiProvider.overrideWith((ref) => Future.value([])),
           mapPoiProvider.overrideWith((ref) => Future.value(mockPois)),
+          guidesProvider.overrideWith((ref) => Future.value([])),
         ],
         child: const MaterialApp(
           home: SearchScreen(query: 'Spaceship'),
@@ -118,8 +118,8 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         wikiItemsProvider.overrideWith((ref) => Future.value(mockWikiItems)),
-        mapPoiProvider.overrideWith((ref) => Future.value([])),
-          mapPoiProvider.overrideWith((ref) => Future.value(mockPois)),
+        mapPoiProvider.overrideWith((ref) => Future.value(mockPois)),
+        guidesProvider.overrideWith((ref) => Future.value([])),
       ],
     );
 
@@ -190,8 +190,8 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         wikiItemsProvider.overrideWith((ref) => Future.value(mockWikiItems)),
-        mapPoiProvider.overrideWith((ref) => Future.value([])),
-          mapPoiProvider.overrideWith((ref) => Future.value(mockPois)),
+        mapPoiProvider.overrideWith((ref) => Future.value(mockPois)),
+        guidesProvider.overrideWith((ref) => Future.value([])),
       ],
     );
 
@@ -259,6 +259,7 @@ void main() {
         overrides: [
           wikiItemsProvider.overrideWith((ref) => Future.value(mockWikiItems)),
           mapPoiProvider.overrideWith((ref) => Future.value([])),
+          guidesProvider.overrideWith((ref) => Future.value([])),
         ],
         child: const MaterialApp(
           home: SearchScreen(query: 'Carbine'),
@@ -294,6 +295,7 @@ void main() {
         overrides: [
           wikiItemsProvider.overrideWith((ref) => Future.value([])),
           mapPoiProvider.overrideWith((ref) => Future.value(mockPois)),
+          guidesProvider.overrideWith((ref) => Future.value([])),
         ],
         child: const MaterialApp(
           home: SearchScreen(query: 'Stunt'),
@@ -550,6 +552,7 @@ void main() {
         wikiItemsProvider.overrideWith((ref) => Future.value([])),
         mapPoiProvider.overrideWith((ref) => Future.value(testPois)),
         poiProvider.overrideWith((ref) => Future.value(testPois)),
+        guidesProvider.overrideWith((ref) => Future.value([])),
       ],
     );
 
@@ -596,6 +599,96 @@ void main() {
     // Shake completed and info card opened automatically
     expect(find.byKey(const Key('shaking_marker_icon_search_poi_1')), findsNothing);
     expect(find.text('Located on top of the Mount Chiliad observation platform.'), findsOneWidget);
+  });
+
+  testWidgets('SearchScreen matches Wiki items by spawnLocations and acquisitionTips (e.g. Sultan RS, Portola Drive, Fort Zancudo)', (WidgetTester tester) async {
+    final mockWikiItems = [
+      WikiItem(
+        id: 'v_sultan',
+        title: 'Karin Sultan',
+        category: 'Vehicles',
+        subCategory: 'Sports',
+        stats: {},
+        description: 'Four-door AWD tuner sedan.',
+        thumbnailUrl: '',
+        spawnLocations: ['Sandy Shores', 'Grove Street'],
+        acquisitionTips: [
+          'Install the Roll Cage and Carbon Hood at Los Santos Customs to unlock the Sultan RS rally spec.',
+        ],
+      ),
+      WikiItem(
+        id: 'v_adder',
+        title: 'Truffade Adder',
+        category: 'Vehicles',
+        subCategory: 'Supercars',
+        stats: {},
+        description: 'Hypercar.',
+        thumbnailUrl: '',
+        spawnLocations: ['Rockford Hills (Portola Drive)'],
+        acquisitionTips: ['Spawns parked outside Sessanta Nove.'],
+      ),
+      WikiItem(
+        id: 'w_minigun',
+        title: 'Minigun',
+        category: 'Weapons',
+        subCategory: 'Heavy',
+        stats: {},
+        description: 'Rotary heavy machine gun.',
+        thumbnailUrl: '',
+        spawnLocations: ['Fort Zancudo Air Traffic Control Tower'],
+        acquisitionTips: ['Top floor locker room pickup.'],
+      ),
+    ];
+
+    // 1. Search by acquisitionTip keyword ("Sultan RS")
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          wikiItemsProvider.overrideWith((ref) => Future.value(mockWikiItems)),
+          mapPoiProvider.overrideWith((ref) => Future.value([])),
+          guidesProvider.overrideWith((ref) => Future.value([])),
+        ],
+        child: const MaterialApp(
+          home: SearchScreen(query: 'Sultan RS'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Karin Sultan'), findsOneWidget);
+    expect(find.text('Truffade Adder'), findsNothing);
+
+    // 2. Search by spawnLocation ("Portola Drive")
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          wikiItemsProvider.overrideWith((ref) => Future.value(mockWikiItems)),
+          mapPoiProvider.overrideWith((ref) => Future.value([])),
+          guidesProvider.overrideWith((ref) => Future.value([])),
+        ],
+        child: const MaterialApp(
+          home: SearchScreen(query: 'Portola Drive'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Truffade Adder'), findsOneWidget);
+    expect(find.text('Karin Sultan'), findsNothing);
+
+    // 3. Search by spawnLocation ("Fort Zancudo")
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          wikiItemsProvider.overrideWith((ref) => Future.value(mockWikiItems)),
+          mapPoiProvider.overrideWith((ref) => Future.value([])),
+          guidesProvider.overrideWith((ref) => Future.value([])),
+        ],
+        child: const MaterialApp(
+          home: SearchScreen(query: 'Fort Zancudo'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Minigun'), findsOneWidget);
   });
 }
 

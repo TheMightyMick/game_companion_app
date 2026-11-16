@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../sdk/models/map_poi.dart';
 import '../../sdk/storage/collection_tracker.dart';
 
@@ -48,7 +49,24 @@ final isRoadLayerProvider = StateProvider<bool>((ref) {
 });
 
 /// Controls whether collected/completed POIs are completely hidden from the map
-final hideCollectedPinsProvider = StateProvider<bool>((ref) => false);
+final hideCollectedPinsProvider = StateProvider<bool>((ref) {
+  SharedPreferences? prefs;
+  try {
+    prefs = ref.watch(sharedPreferencesProvider);
+  } catch (_) {
+    prefs = null;
+  }
+  final initial = prefs?.getBool(MapFilterNotifier.kHideCollectedPinsPrefKey) ?? false;
+  ref.listenSelf((previous, next) {
+    if (previous != null && previous != next) {
+      prefs?.setBool(MapFilterNotifier.kHideCollectedPinsPrefKey, next);
+    }
+  });
+  return initial;
+});
+
+/// Holds the currently selected POI on the map (e.g. tapped by the user or targeted via Search / Find Next Closest)
+final selectedPoiProvider = StateProvider<MapPointOfInterest?>((ref) => null);
 
 /// Holds a currently targeted or highlighted POI (e.g. found via Nearest Neighbor routing)
 final highlightedPoiProvider = StateProvider<MapPointOfInterest?>((ref) => null);
@@ -158,7 +176,14 @@ class MapFilterState {
     ],
   };
 
-  /// Set of all default subcategories enabled out-of-the-box.
+  /// Default initial subcategories enabled on fresh launch (Services only to avoid map clutter).
+  static const Set<String> defaultInitialSubcategories = {
+    'properties',
+    'safehouses',
+    'ammunation',
+  };
+
+  /// Set of all canonical subcategories (used by `enableAll()` / "Select All").
   static const Set<String> allDefaultSubcategories = {
     'spaceship_parts',
     'letter_scraps',
@@ -253,6 +278,11 @@ class MapFilterState {
     return const MapFilterState(enabledSubcategories: {});
   }
 
+  /// Helper to reset filters back to the clean initial defaults (`services` only).
+  MapFilterState resetToDefaults() {
+    return const MapFilterState(enabledSubcategories: defaultInitialSubcategories);
+  }
+
   /// Backwards-compatibility helper for legacy callers expecting `filterState.contains(key)`.
   bool contains(String categoryOrSubcategory) {
     if (enabledSubcategories.contains(categoryOrSubcategory)) return true;
@@ -281,12 +311,34 @@ class MapFilterState {
 
 /// Notifier to manage the set of actively selected/filtered subcategories and categories
 class MapFilterNotifier extends StateNotifier<MapFilterState> {
+  static const String kEnabledSubcategoriesPrefKey = 'map_enabled_subcategories';
+  static const String kHideCollectedPinsPrefKey = 'map_hide_collected_pins';
+
+  final SharedPreferences? _prefs;
   bool _isInitialized = false;
 
-  MapFilterNotifier([Set<String>? initialSubcategories])
-      : super(MapFilterState(
-          enabledSubcategories: initialSubcategories ?? MapFilterState.allDefaultSubcategories,
+  MapFilterNotifier([Set<String>? initialSubcategories, SharedPreferences? prefs])
+      : _prefs = prefs,
+        super(MapFilterState(
+          enabledSubcategories: initialSubcategories ??
+              _loadSavedSubcategories(prefs) ??
+              MapFilterState.defaultInitialSubcategories,
         ));
+
+  static Set<String>? _loadSavedSubcategories(SharedPreferences? prefs) {
+    if (prefs == null || !prefs.containsKey(kEnabledSubcategoriesPrefKey)) {
+      return null;
+    }
+    final saved = prefs.getStringList(kEnabledSubcategoriesPrefKey);
+    return saved?.toSet();
+  }
+
+  void _persist() {
+    _prefs?.setStringList(
+      kEnabledSubcategoriesPrefKey,
+      state.enabledSubcategories.toList(),
+    );
+  }
 
   /// Checks if a subcategory is enabled.
   bool isSubcategoryEnabled(String subCategory) => state.isSubcategoryEnabled(subCategory);
@@ -300,26 +352,37 @@ class MapFilterNotifier extends StateNotifier<MapFilterState> {
   /// Toggles an individual subcategory on or off.
   void toggleSubcategory(String subCategory) {
     state = state.toggleSubcategory(subCategory);
+    _persist();
   }
 
   /// Ensures an individual subcategory is enabled.
   void enableSubcategory(String subCategory) {
     state = state.enableSubcategory(subCategory);
+    _persist();
   }
 
   /// Toggles an entire category group on or off.
   void toggleCategoryGroup(dynamic categoryOrSubcategories) {
     state = state.toggleCategoryGroup(categoryOrSubcategories);
+    _persist();
   }
 
   /// Enables all subcategories.
   void enableAll([Iterable<String>? subcategories]) {
     state = state.enableAll(subcategories);
+    _persist();
   }
 
   /// Disables all subcategories.
   void disableAll() {
     state = state.disableAll();
+    _persist();
+  }
+
+  /// Resets filters to the default initial subcategories (`services`).
+  void resetToDefaults() {
+    state = state.resetToDefaults();
+    _persist();
   }
 
   /// Legacy helper for backwards compatibility.
@@ -340,13 +403,20 @@ class MapFilterNotifier extends StateNotifier<MapFilterState> {
       }
       state = MapFilterState(enabledSubcategories: current);
       _isInitialized = true;
+      _persist();
     }
   }
 }
 
 /// Central filter state provider
 final mapFilterProvider = StateNotifierProvider<MapFilterNotifier, MapFilterState>((ref) {
-  return MapFilterNotifier();
+  SharedPreferences? prefs;
+  try {
+    prefs = ref.watch(sharedPreferencesProvider);
+  } catch (_) {
+    prefs = null;
+  }
+  return MapFilterNotifier(null, prefs);
 });
 
 /// Telemetry statistics for an individual subcategory

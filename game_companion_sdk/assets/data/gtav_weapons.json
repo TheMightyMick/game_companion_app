@@ -3,6 +3,7 @@
     "id": "w_pistol",
     "title": "Standard Pistol",
     "category": "Weapons",
+    "subCategory": "Pistols",
     "stats": {
       "Damage": 0.26,
       "Fire Rate": 0.4,
@@ -10,12 +11,22 @@
       "Range": 0.25
     },
     "description": "Modeled after the Taurus PT92 and Beretta 92FS, this standard-issue semi-automatic sidearm is ubiquitous across Los Santos law enforcement and street crews.",
-    "thumbnailUrl": "assets/media/gtav/weapons/pistol.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/pistol.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($350)",
+      "LSPD Officers & Security Guards",
+      "Paleto Bay Pier Pickup"
+    ],
+    "acquisitionTips": [
+      "Automatically given to Michael and Franklin at the start of Story Mode; dropped by almost every LSPD officer.",
+      "Equip a Suppressor ($725) at Ammu-Nation for an early-game silent stealth sidearm."
+    ]
   },
   {
     "id": "w_combat_pistol",
     "title": "Combat Pistol",
     "category": "Weapons",
+    "subCategory": "Pistols",
     "stats": {
       "Damage": 0.28,
       "Fire Rate": 0.45,
@@ -23,12 +34,22 @@
       "Range": 0.3
     },
     "description": "Based on the Heckler & Koch P2000, offering improved stopping power, higher magazine capacity, and crisp semi-automatic recoil control.",
-    "thumbnailUrl": "assets/media/gtav/weapons/combat_pistol.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/combat_pistol.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($600)",
+      "Vangelico Heist Security Guards",
+      "Vespucci Canals Construction Pickup"
+    ],
+    "acquisitionTips": [
+      "Unlocks at Ammu-Nation after completing 'Complications' for $600, or pick it up for free during early Story Mode missions.",
+      "Features higher accuracy and tighter grouping than the Standard Pistol."
+    ]
   },
   {
     "id": "w_ap_pistol",
     "title": "AP Pistol",
     "category": "Weapons",
+    "subCategory": "Pistols",
     "stats": {
       "Damage": 0.25,
       "Fire Rate": 0.8,
@@ -36,12 +57,21 @@
       "Range": 0.3
     },
     "description": "An armor-piercing machine pistol inspired by the Colt SCAMP and OTs-33 Pernach, regarded as the premier drive-by sidearm due to its blistering automatic fire rate.",
-    "thumbnailUrl": "assets/media/gtav/weapons/ap_pistol.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/ap_pistol.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($1,000)",
+      "Unlocked after 'Three's Company'"
+    ],
+    "acquisitionTips": [
+      "Unlocks at Ammu-Nation after completing the FIB mission 'Three's Company'.",
+      "Strictly outperforms the Micro SMG while driving — install the Extended Clip (36 rounds) to shred pursuing vehicles."
+    ]
   },
   {
     "id": "w_heavy_revolver",
     "title": "Heavy Revolver",
     "category": "Weapons",
+    "subCategory": "Pistols",
     "stats": {
       "Damage": 0.75,
       "Fire Rate": 0.2,
@@ -49,12 +79,21 @@
       "Range": 0.45
     },
     "description": "A high-caliber six-shooter inspired by the Taurus Raging Bull, delivering devastating one-shot body damage at the expense of heavy cylinder cycle times.",
-    "thumbnailUrl": "assets/media/gtav/weapons/heavy_revolver.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/heavy_revolver.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores",
+      "Blaine County Outlaws"
+    ],
+    "acquisitionTips": [
+      "Capable of dropping unarmored enemies in a single torso shot and damaging vehicle engine blocks.",
+      "Pair with Michael's Bullet Time special ability to negate its slow cylinder fire rate."
+    ]
   },
   {
     "id": "w_micro_smg",
     "title": "Micro SMG",
     "category": "Weapons",
+    "subCategory": "SMGs",
     "stats": {
       "Damage": 0.22,
       "Fire Rate": 0.75,
@@ -62,12 +101,22 @@
       "Range": 0.25
     },
     "description": "Based on the iconic Mini Uzi, this compact submachine gun can be fired from within vehicles during high-speed chases and urban shootouts.",
-    "thumbnailUrl": "assets/media/gtav/weapons/micro_smg.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/micro_smg.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($850)",
+      "Grove Street & Chamberlain Hills Gang Members",
+      "Alamo Sea Boat Shed Pickup"
+    ],
+    "acquisitionTips": [
+      "Unlocks at Ammu-Nation right after 'Franklin and Lamar' and is your primary drive-by weapon in the first half of the story.",
+      "Can be picked up for free behind the boat shed on the northern shore of the Alamo Sea."
+    ]
   },
   {
     "id": "w_smg",
     "title": "SMG",
     "category": "Weapons",
+    "subCategory": "SMGs",
     "stats": {
       "Damage": 0.25,
       "Fire Rate": 0.6,
@@ -75,12 +124,22 @@
       "Range": 0.35
     },
     "description": "The quintessential MP5 submachine gun with a collapsible stock, providing low muzzle climb and dependable intermediate-range automatic fire.",
-    "thumbnailUrl": "assets/media/gtav/weapons/smg.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/smg.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($1,300)",
+      "NOOSE Tactical Units",
+      "Cypress Flats Warehouse Pickup"
+    ],
+    "acquisitionTips": [
+      "Unlocks after 'Father/Son' at Ammu-Nation, or can be looted from NOOSE tactical officers at 3+ Wanted Stars.",
+      "Note: Because of its full receiver and stock, the standard SMG cannot be fired from inside cars (use the Micro SMG or AP Pistol for drive-bys)."
+    ]
   },
   {
     "id": "w_combat_pdw",
     "title": "Combat PDW",
     "category": "Weapons",
+    "subCategory": "SMGs",
     "stats": {
       "Damage": 0.28,
       "Fire Rate": 0.65,
@@ -88,12 +147,20 @@
       "Range": 0.38
     },
     "description": "Modeled after the SIG Sauer MPX, featuring an integrated suppressor shroud that muffles gunshots and prevents radar pings during stealth infiltration.",
-    "thumbnailUrl": "assets/media/gtav/weapons/combat_pdw.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/combat_pdw.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($11,750)"
+    ],
+    "acquisitionTips": [
+      "Comes with a built-in integral suppressor right out of the box, saving you the cost of a muzzle attachment.",
+      "Add the Scope and Grip at Ammu-Nation for laser-like burst accuracy at medium range."
+    ]
   },
   {
     "id": "w_pump_shotgun",
     "title": "Pump Shotgun",
     "category": "Weapons",
+    "subCategory": "Shotguns",
     "stats": {
       "Damage": 0.67,
       "Fire Rate": 0.2,
@@ -101,12 +168,22 @@
       "Range": 0.2
     },
     "description": "A 12-gauge Mossberg 590 pump-action shotgun found in every police cruiser, delivering lethal buckshot spreads at close-quarters room-clearing distances.",
-    "thumbnailUrl": "assets/media/gtav/weapons/pump_shotgun.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/pump_shotgun.webp",
+    "spawnLocations": [
+      "LSPD Police Cruisers (Free)",
+      "All Ammu-Nation Stores ($550)",
+      "Altruist Cult Camp"
+    ],
+    "acquisitionTips": [
+      "Free Acquisition: Stepping into any LSPD Police Cruiser or Sheriff SUV immediately awards you a Pump Shotgun with 5 shells.",
+      "Unlocks at Ammu-Nation after 'The Long Stretch'."
+    ]
   },
   {
     "id": "w_sawed_off_shotgun",
     "title": "Sawed-Off Shotgun",
     "category": "Weapons",
+    "subCategory": "Shotguns",
     "stats": {
       "Damage": 0.72,
       "Fire Rate": 0.25,
@@ -114,12 +191,22 @@
       "Range": 0.15
     },
     "description": "A modified double-barrel break-action shotgun with shortened barrels, compact enough to be drawn and fired from motorcycles and bicycles.",
-    "thumbnailUrl": "assets/media/gtav/weapons/sawed_off_shotgun.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/sawed_off_shotgun.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores (Free with Social Club)",
+      "Stab City (Lost MC Trailer Park)",
+      "Hookies Diner (North Chumash)"
+    ],
+    "acquisitionTips": [
+      "Free at Ammu-Nation when linked to Rockstar Games Social Club, or given to Trevor automatically during 'Mr. Philips'.",
+      "Can be fired one-handed while riding motorcycles such as the Bati 801 or Sanchez."
+    ]
   },
   {
     "id": "w_assault_shotgun",
     "title": "Assault Shotgun",
     "category": "Weapons",
+    "subCategory": "Shotguns",
     "stats": {
       "Damage": 0.65,
       "Fire Rate": 0.5,
@@ -127,12 +214,21 @@
       "Range": 0.25
     },
     "description": "Inspired by the UTAS UTS-15, this drum-fed fully-automatic combat shotgun dismantles vehicle armor and clears fortified corridors in seconds.",
-    "thumbnailUrl": "assets/media/gtav/weapons/assault_shotgun.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/assault_shotgun.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($1,500)",
+      "Little Seoul Construction Tunnel Pickup"
+    ],
+    "acquisitionTips": [
+      "Unlocks at Ammu-Nation after 'blitz Play' for $1,500.",
+      "Equip the 32-round Extended Drum Magazine to turn it into the ultimate close-quarters room-clearing weapon for late-game heists and Rampages."
+    ]
   },
   {
     "id": "w_carbine_rifle",
     "title": "Carbine Rifle",
     "category": "Weapons",
+    "subCategory": "Rifles",
     "stats": {
       "Damage": 0.32,
       "Fire Rate": 0.65,
@@ -140,12 +236,22 @@
       "Range": 0.45
     },
     "description": "Modeled after the ubiquitous Colt M4A1, the Carbine Rifle serves as the all-around benchmark for combat accuracy, handling, and tactical customization.",
-    "thumbnailUrl": "assets/media/gtav/weapons/carbine_rifle.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/carbine_rifle.webp",
+    "spawnLocations": [
+      "The Jewel Store Job (Loud Approach)",
+      "All Ammu-Nation Stores ($2,100)",
+      "NOOSE & Merryweather Operatives"
+    ],
+    "acquisitionTips": [
+      "Automatically unlocked and equipped during 'The Jewel Store Job' (or unlocked at Ammu-Nation afterward for $2,100).",
+      "Also spawns as a free pickup on the NOOSE Headquarters rooftop helipad next to the Buzzard."
+    ]
   },
   {
     "id": "w_assault_rifle",
     "title": "Assault Rifle",
     "category": "Weapons",
+    "subCategory": "Rifles",
     "stats": {
       "Damage": 0.34,
       "Fire Rate": 0.6,
@@ -153,12 +259,22 @@
       "Range": 0.45
     },
     "description": "A rugged Kalashnikov AK-47 variant featuring stamping and wood furniture that delivers heavier per-bullet damage across medium combat ranges.",
-    "thumbnailUrl": "assets/media/gtav/weapons/assault_rifle.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/assault_rifle.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($1,400)",
+      "Altruist Cult Camp (Chiliad Mountain State Wilderness)",
+      "Grand Senora Desert Meth Lab"
+    ],
+    "acquisitionTips": [
+      "Can be picked up early for free inside the Altruist Cult compound or dropped by Aztecas gang members in Blaine County.",
+      "Cheaper to purchase and upgrade than the Carbine Rifle while offering slightly higher base damage per shot."
+    ]
   },
   {
     "id": "w_special_carbine",
     "title": "Special Carbine",
     "category": "Weapons",
+    "subCategory": "Rifles",
     "stats": {
       "Damage": 0.34,
       "Fire Rate": 0.68,
@@ -166,12 +282,20 @@
       "Range": 0.48
     },
     "description": "Based on the Heckler & Koch G36C, combining a lightweight polymer composite frame with superior muzzle velocity and recoil stabilization.",
-    "thumbnailUrl": "assets/media/gtav/weapons/special_carbine.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/special_carbine.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($14,750)"
+    ],
+    "acquisitionTips": [
+      "Available immediately from the very first visit to Ammu-Nation in Story Mode without waiting for mission unlocks.",
+      "Widely considered the best all-around assault rifle in GTA V when fitted with the Grip, Scope, and Extended Clip."
+    ]
   },
   {
     "id": "w_advanced_rifle",
     "title": "Advanced Rifle",
     "category": "Weapons",
+    "subCategory": "Rifles",
     "stats": {
       "Damage": 0.34,
       "Fire Rate": 0.7,
@@ -179,12 +303,21 @@
       "Range": 0.45
     },
     "description": "A bullpup assault rifle based on the IWI Tavor CTAR-21, delivering rapid cyclic fire with compact maneuverability in confined corridors.",
-    "thumbnailUrl": "assets/media/gtav/weapons/advanced_rifle.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/advanced_rifle.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($3,500)",
+      "Unlocked after 'The Big Score'"
+    ],
+    "acquisitionTips": [
+      "Boasts the highest fire rate of any assault rifle in the game, melting armored targets at close-to-medium range.",
+      "Unlocks at Ammu-Nation late in the story after 'The Big Score'."
+    ]
   },
   {
     "id": "w_sniper_rifle",
     "title": "Sniper Rifle",
     "category": "Weapons",
+    "subCategory": "Snipers",
     "stats": {
       "Damage": 0.85,
       "Fire Rate": 0.2,
@@ -192,12 +325,22 @@
       "Range": 0.85
     },
     "description": "An AWM-style bolt-action precision marksman rifle equipped with high-magnification telescopic glass for long-range tactical target neutralization.",
-    "thumbnailUrl": "assets/media/gtav/weapons/sniper_rifle.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/sniper_rifle.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($5,000)",
+      "Paleto Bay Sheriff Station Roof",
+      "Altruist Cult Watchtower"
+    ],
+    "acquisitionTips": [
+      "Given to Trevor for free during 'Nervous Ron' (complete with a Suppressor and Advanced Scope).",
+      "Required for completing several of Lester's Assassination missions cleanly from a distance."
+    ]
   },
   {
     "id": "w_heavy_sniper",
     "title": "Heavy Sniper",
     "category": "Weapons",
+    "subCategory": "Snipers",
     "stats": {
       "Damage": 0.98,
       "Fire Rate": 0.22,
@@ -205,12 +348,22 @@
       "Range": 0.98
     },
     "description": "A devastating .50 BMG anti-materiel rifle based on the Barrett M82, capable of piercing engine blocks and taking down tail rotors in a single trigger pull.",
-    "thumbnailUrl": "assets/media/gtav/weapons/heavy_sniper.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/heavy_sniper.webp",
+    "relatedPoiId": "spawn_sniper_hospital",
+    "spawnLocations": [
+      "Central Los Santos Medical Center Roof (Davis)",
+      "All Ammu-Nation Stores ($9,500)"
+    ],
+    "acquisitionTips": [
+      "Free Map Pickup: Climb the access ladders or land a helicopter on the roof of Central Los Santos Medical Center in Davis to grab the Heavy Sniper for free.",
+      "Unlocks at Ammu-Nation during 'Three's Company' and can shoot down police helicopters in two hits to the rotor hub."
+    ]
   },
   {
     "id": "w_marksman_rifle",
     "title": "Marksman Rifle",
     "category": "Weapons",
+    "subCategory": "Snipers",
     "stats": {
       "Damage": 0.65,
       "Fire Rate": 0.45,
@@ -218,12 +371,20 @@
       "Range": 0.75
     },
     "description": "A designated marksman rifle modeled after the M14 EBR, providing rapid semi-automatic follow-up shots through an illuminated sniper optic.",
-    "thumbnailUrl": "assets/media/gtav/weapons/marksman_rifle.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/marksman_rifle.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($15,750)"
+    ],
+    "acquisitionTips": [
+      "Allows you to strafe while aiming down the sniper scope, unlike the bolt-action Sniper Rifle and Heavy Sniper.",
+      "Rapid semi-automatic fire makes it forgiving against moving vehicle targets."
+    ]
   },
   {
     "id": "w_rpg",
     "title": "RPG (Rocket Launcher)",
     "category": "Weapons",
+    "subCategory": "Heavy",
     "stats": {
       "Damage": 1.0,
       "Fire Rate": 0.15,
@@ -231,12 +392,23 @@
       "Range": 0.65
     },
     "description": "The classic RPG-7 shoulder-fired rocket launcher, launching high-explosive anti-tank warheads that annihilate grouped infantry and light armored vehicles.",
-    "thumbnailUrl": "assets/media/gtav/weapons/rpg.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/rpg.webp",
+    "relatedPoiId": "spawn_rpg_zancudo_bridge",
+    "spawnLocations": [
+      "Zancudo River Bridge Catwalk (Route 1)",
+      "Altruist Cult Camp",
+      "All Ammu-Nation Stores ($6,500)"
+    ],
+    "acquisitionTips": [
+      "Free Map Pickup: Walk onto the steel maintenance catwalk underneath the Route 1 bridge spanning the Zancudo River (just south of Fort Zancudo) to collect a free RPG.",
+      "Can also be found on the upper porch inside the Altruist Cult compound in the Chiliad wilderness."
+    ]
   },
   {
     "id": "w_minigun",
     "title": "Minigun",
     "category": "Weapons",
+    "subCategory": "Heavy",
     "stats": {
       "Damage": 0.38,
       "Fire Rate": 1.0,
@@ -244,12 +416,22 @@
       "Range": 0.6
     },
     "description": "A multi-barrel Gatling rotary heavy machine gun based on the M134, firing thousands of rounds per minute capable of tearing armored convoys to shreds.",
-    "thumbnailUrl": "assets/media/gtav/weapons/minigun.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/minigun.webp",
+    "relatedPoiId": "spawn_minigun_zancudo",
+    "spawnLocations": [
+      "Fort Zancudo Air Traffic Control Tower (Top Floor)",
+      "All Ammu-Nation Stores ($15,000)"
+    ],
+    "acquisitionTips": [
+      "Free Map Pickup: Enter the main door of the tall Air Traffic Control Tower in Fort Zancudo and take the elevator/stairs to the top locker room to find a free Minigun.",
+      "Unlocks at Ammu-Nation after completing 'The Paleto Score' for $15,000."
+    ]
   },
   {
     "id": "w_sticky_bomb",
     "title": "Sticky Bomb (C4)",
     "category": "Weapons",
+    "subCategory": "Heavy",
     "stats": {
       "Damage": 0.95,
       "Fire Rate": 0.3,
@@ -257,12 +439,21 @@
       "Range": 0.35
     },
     "description": "Plastic explosive charges fitted with high-power adhesive backing and a remote radio frequency detonator, perfect for ambush traps and security van doors.",
-    "thumbnailUrl": "assets/media/gtav/weapons/sticky_bomb.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/sticky_bomb.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($400 each)",
+      "Elysee Island Dock Warehouse Pickup"
+    ],
+    "acquisitionTips": [
+      "Unlocks at Ammu-Nation after 'Friends Reunited'.",
+      "Stick a single C4 charge directly onto the rear doors of a Gruppe Sechs Armored Security Van to blow open the cash doors immediately without triggering a prolonged chase."
+    ]
   },
   {
     "id": "w_combat_knife",
     "title": "Combat Knife",
     "category": "Weapons",
+    "subCategory": "Melee",
     "stats": {
       "Damage": 0.25,
       "Fire Rate": 0.5,
@@ -270,6 +461,13 @@
       "Range": 0.05
     },
     "description": "A 7-inch carbon steel fixed-blade tactical knife with serrated spine, tailored for silent takedowns and close-quarters hand-to-hand combat.",
-    "thumbnailUrl": "assets/media/gtav/weapons/combat_knife.webp"
+    "thumbnailUrl": "assets/media/gtav/weapons/combat_knife.webp",
+    "spawnLocations": [
+      "All Ammu-Nation Stores ($100)"
+    ],
+    "acquisitionTips": [
+      "Available from the start of Story Mode at any Ammu-Nation counter for $100.",
+      "Essential for underwater shark defense while diving for Submarine Pieces and Nuclear Waste without a submersible."
+    ]
   }
 ]

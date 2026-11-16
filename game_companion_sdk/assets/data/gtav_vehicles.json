@@ -3,6 +3,7 @@
     "id": "v_adder",
     "title": "Truffade Adder",
     "category": "Vehicles",
+    "subCategory": "Supercars",
     "stats": {
       "Speed": 0.86,
       "Acceleration": 0.8,
@@ -10,12 +11,24 @@
       "Handling": 0.75
     },
     "description": "Inspired by the Bugatti Veyron, the Truffade Adder is one of the fastest straight-line hypercars in Los Santos, featuring an iconic aerodynamic rear wing.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/adder.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/adder.webp",
+    "relatedPoiId": "spawn_adder_portola",
+    "spawnLocations": [
+      "Rockford Hills (Portola Drive)",
+      "Sessanta Nove Boutique",
+      "Legendary Motorsport ($1,000,000)"
+    ],
+    "acquisitionTips": [
+      "Spawns parked along the curb on Portola Drive outside the Sessanta Nove store in Rockford Hills between 08:00 and 18:00.",
+      "If it doesn't appear immediately, drive two blocks away toward Burton and loop back without looking at the parking spot to refresh traffic.",
+      "Can also be purchased anytime in Story Mode from Legendary Motorsport for $1,000,000 and stored in a 4-car character garage."
+    ]
   },
   {
     "id": "v_t20",
     "title": "Progen T20",
     "category": "Vehicles",
+    "subCategory": "Supercars",
     "stats": {
       "Speed": 0.87,
       "Acceleration": 0.88,
@@ -23,12 +36,23 @@
       "Handling": 0.82
     },
     "description": "Based on the McLaren P1, the T20 features an active hydraulic rear wing that raises at high speeds and tilts forward as an airbrake during hard deceleration.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/t20.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/t20.webp",
+    "spawnLocations": [
+      "Legendary Motorsport ($2,200,000)",
+      "Vinewood Hills",
+      "Rockford Hills"
+    ],
+    "acquisitionTips": [
+      "Available for purchase from Legendary Motorsport for $2,200,000 in Story Mode.",
+      "Do not install a custom fixed spoiler at Los Santos Customs if you want to keep the active hydraulic airbrake wing animation intact.",
+      "Purchase Los Santos Customs in Harmony (Route 68) as Franklin first to apply all EMS Engine, Transmission, and Turbo upgrades for free."
+    ]
   },
   {
     "id": "v_zentorno",
     "title": "Pegassi Zentorno",
     "category": "Vehicles",
+    "subCategory": "Supercars",
     "stats": {
       "Speed": 0.85,
       "Acceleration": 0.89,
@@ -36,12 +60,23 @@
       "Handling": 0.8
     },
     "description": "Aggressive Lamborghini Veneno-inspired styling with hexagonal heat-shield rear louvers that make the rear window completely bulletproof against small arms.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/zentorno.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/zentorno.webp",
+    "spawnLocations": [
+      "Pillbox Hill Parking Garage",
+      "Burton Los Santos Customs",
+      "Legendary Motorsport ($725,000)"
+    ],
+    "acquisitionTips": [
+      "Occasionally spawns pre-modified inside the multi-story parking garage in Pillbox Hill or near the Burton Los Santos Customs.",
+      "Can be purchased from Legendary Motorsport for $725,000 — one of the best value hypercars in single-player.",
+      "Its rear engine cover has no rear window glass, making you immune to gunfire from behind during police pursuits."
+    ]
   },
   {
     "id": "v_entity_xf",
-    "title": "\u00d6verfl\u00f6d Entity XF",
+    "title": "Överflöd Entity XF",
     "category": "Vehicles",
+    "subCategory": "Supercars",
     "stats": {
       "Speed": 0.84,
       "Acceleration": 0.83,
@@ -49,12 +84,21 @@
       "Handling": 0.83
     },
     "description": "Modeled after the Koenigsegg CCX, the Entity XF boasts legendary high-speed traction and mid-engine stability through tight high-speed corners.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/entity_xf.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/entity_xf.webp",
+    "spawnLocations": [
+      "Legendary Motorsport ($795,000)",
+      "Rockford Hills"
+    ],
+    "acquisitionTips": [
+      "Available exclusively via Legendary Motorsport for $795,000 after completing the early Story Mode prologue missions.",
+      "Features AWD traction bias that prevents spinouts when clipping curbs at high speed during street races."
+    ]
   },
   {
     "id": "v_turismo_r",
     "title": "Grotti Turismo R",
     "category": "Vehicles",
+    "subCategory": "Supercars",
     "stats": {
       "Speed": 0.84,
       "Acceleration": 0.85,
@@ -62,12 +106,22 @@
       "Handling": 0.81
     },
     "description": "A hybrid hypercar blending LaFerrari and McLaren P1 DNA, delivering instant electric motor throttle response and exceptional track downforce.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/turismo_r.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/turismo_r.webp",
+    "spawnLocations": [
+      "Rockford Hills",
+      "Pillbox Hill",
+      "Legendary Motorsport ($500,000)"
+    ],
+    "acquisitionTips": [
+      "Can spawn in traffic or parked around Rockford Hills and Pillbox Hill, often with custom paint and aero upgrades.",
+      "Priced at $500,000 on Legendary Motorsport, making it the most affordable top-tier hypercar in Story Mode."
+    ]
   },
   {
     "id": "v_cheetah",
     "title": "Grotti Cheetah",
     "category": "Vehicles",
+    "subCategory": "Supercars",
     "stats": {
       "Speed": 0.82,
       "Acceleration": 0.78,
@@ -75,25 +129,44 @@
       "Handling": 0.77
     },
     "description": "A low-slung, wedge-profile Italian supercar inspired by the Ferrari Enzo and Pagani Zonda with gullwing-style rear engine access.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/cheetah.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/cheetah.webp",
+    "spawnLocations": [
+      "Legendary Motorsport ($650,000)",
+      "Vinewood Boulevard"
+    ],
+    "acquisitionTips": [
+      "Purchasable from Legendary Motorsport for $650,000.",
+      "Its extreme wedge front nose acts as a natural ramp under oncoming traffic if you collide head-on at high speed."
+    ]
   },
   {
     "id": "v_infernus",
     "title": "Pegassi Infernus",
     "category": "Vehicles",
+    "subCategory": "Supercars",
     "stats": {
       "Speed": 0.81,
       "Acceleration": 0.76,
       "Braking": 0.28,
       "Handling": 0.74
     },
-    "description": "A staple of the GTA franchise modeled on the Lamborghini Murci\u00e9lago, featuring signature scissor doors and center-mounted triple exhaust.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/infernus.webp"
+    "description": "A staple of the GTA franchise modeled on the Lamborghini Murciélago, featuring signature scissor doors and center-mounted triple exhaust.",
+    "thumbnailUrl": "assets/media/gtav/vehicles/infernus.webp",
+    "spawnLocations": [
+      "Rockford Hills",
+      "Richman & Vinewood Hills",
+      "Legendary Motorsport ($440,000)"
+    ],
+    "acquisitionTips": [
+      "Frequently spawns driven in traffic through Rockford Hills, Richman, and Eclipse Boulevard during daytime hours.",
+      "Can be stolen directly from street traffic and saved in any character safehouse garage or 4-car garage without paying the $440,000 website price."
+    ]
   },
   {
     "id": "v_osiris",
     "title": "Pegassi Osiris",
     "category": "Vehicles",
+    "subCategory": "Supercars",
     "stats": {
       "Speed": 0.86,
       "Acceleration": 0.88,
@@ -101,12 +174,21 @@
       "Handling": 0.81
     },
     "description": "Inspired by the Pagani Huayra with gullwing doors, twin-turbo V12 engine, and all-wheel-drive that provides instant launch control.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/osiris.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/osiris.webp",
+    "spawnLocations": [
+      "Legendary Motorsport ($1,950,000)",
+      "Rockford Hills"
+    ],
+    "acquisitionTips": [
+      "Available from Legendary Motorsport for $1,950,000.",
+      "Best purchased after completing Lester's Assassination stock market investments so all three protagonists have ample funds."
+    ]
   },
   {
     "id": "v_elegy_rh8",
     "title": "Annis Elegy RH8",
     "category": "Vehicles",
+    "subCategory": "Sports",
     "stats": {
       "Speed": 0.8,
       "Acceleration": 0.82,
@@ -114,12 +196,21 @@
       "Handling": 0.82
     },
     "description": "A Nissan GT-R counterpart renowned for its sophisticated AWD computer system that practically glues the car to the road through wet asphalt and asphalt chicanes.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/elegy_rh8.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/elegy_rh8.webp",
+    "spawnLocations": [
+      "Character 4-Car Garages (Special Vehicle List)",
+      "Legendary Motorsport (Free)"
+    ],
+    "acquisitionTips": [
+      "Unlocked for free in Story Mode for players with a linked Rockstar Games Social Club account.",
+      "Stand inside Michael, Franklin, or Trevor's 4-car garage and open the Special Vehicles menu to spawn an Elegy RH8 at zero cost."
+    ]
   },
   {
     "id": "v_banshee",
     "title": "Bravado Banshee",
     "category": "Vehicles",
+    "subCategory": "Sports",
     "stats": {
       "Speed": 0.81,
       "Acceleration": 0.79,
@@ -127,12 +218,22 @@
       "Handling": 0.72
     },
     "description": "The quintessential Dodge Viper tribute with high-displacement V10 power, broad oversteer tendencies, and unmistakable twin racing stripes.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/banshee.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/banshee.webp",
+    "spawnLocations": [
+      "Rockford Hills & Kortz Center",
+      "Vespucci Beach",
+      "Legendary Motorsport ($105,000)"
+    ],
+    "acquisitionTips": [
+      "Commonly spawns in traffic around Rockford Hills, Chumash, and the Kortz Center parking lot.",
+      "Available in both hardtop and convertible roadster variants; steal one off the street to save $105,000."
+    ]
   },
   {
     "id": "v_comet",
     "title": "Pfister Comet",
     "category": "Vehicles",
+    "subCategory": "Sports",
     "stats": {
       "Speed": 0.8,
       "Acceleration": 0.83,
@@ -140,12 +241,22 @@
       "Handling": 0.76
     },
     "description": "A rear-engine German performance icon based on the Porsche 997 GT2, featuring explosive acceleration paired with a lively oversteering rear axle.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/comet.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/comet.webp",
+    "spawnLocations": [
+      "Isiah Friedlander's Pacific Bluffs Driveway",
+      "Rockford Hills & Richman",
+      "Legendary Motorsport ($100,000)"
+    ],
+    "acquisitionTips": [
+      "A red Pfister Comet is always parked outside Dr. Isiah Friedlander's beach house in Pacific Bluffs before and during Michael's therapy sessions.",
+      "Also spawns regularly in Rockford Hills and Del Perro traffic, or can be dialed in via the 'COMET' cheat code for casual free-roam."
+    ]
   },
   {
     "id": "v_jester",
     "title": "Dinka Jester",
     "category": "Vehicles",
+    "subCategory": "Sports",
     "stats": {
       "Speed": 0.81,
       "Acceleration": 0.8,
@@ -153,12 +264,22 @@
       "Handling": 0.79
     },
     "description": "A futuristic hybrid sports coupe reminiscent of the Acura/Honda NSX concept, combining sleek aerodynamics with confident all-wheel drive.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/jester.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/jester.webp",
+    "spawnLocations": [
+      "Los Santos Customs (Burton & LSIA)",
+      "Rockford Hills",
+      "Legendary Motorsport ($240,000)"
+    ],
+    "acquisitionTips": [
+      "Frequently spawns parked outside the Burton or LSIA Los Santos Customs shops already fitted with custom rims and aero parts.",
+      "Install the Rear Louvers mod at Los Santos Customs to protect the cabin from rear gunfire."
+    ]
   },
   {
     "id": "v_sultan",
     "title": "Karin Sultan",
     "category": "Vehicles",
+    "subCategory": "Sports",
     "stats": {
       "Speed": 0.75,
       "Acceleration": 0.76,
@@ -166,12 +287,24 @@
       "Handling": 0.78
     },
     "description": "A fan-favorite four-door tuner heavily inspired by the Subaru Impreza WRX and Lexus IS300, capable of seamless tarmac-to-dirt rally performance.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/sultan.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/sultan.webp",
+    "relatedPoiId": "property_los_santos_customs",
+    "spawnLocations": [
+      "Sandy Shores & Harmony (Route 68)",
+      "Grove Street & Chamberlain Hills",
+      "Bolingbroke Penitentiary Parking Lot"
+    ],
+    "acquisitionTips": [
+      "Not sold on websites in original Story Mode — find it in traffic around Sandy Shores, Grove Street, or the Bolingbroke Penitentiary visitor lot.",
+      "Sultan RS Upgrade: Take any Karin Sultan to Los Santos Customs and install the Roll Cage and Carbon Hood to add 'Sultan RS' badging and twin-turbo intercooler styling.",
+      "Its AWD drivetrain makes it the best 4-door getaway car in the game for hill climbs and off-road shortcuts."
+    ]
   },
   {
     "id": "v_dominator",
     "title": "Vapid Dominator",
     "category": "Vehicles",
+    "subCategory": "Muscle",
     "stats": {
       "Speed": 0.78,
       "Acceleration": 0.75,
@@ -179,12 +312,22 @@
       "Handling": 0.65
     },
     "description": "A roaring American muscle icon modeled on the fifth-generation Ford Mustang, demanding throttle discipline to prevent spinning the rear wheels.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/dominator.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/dominator.webp",
+    "spawnLocations": [
+      "Strawberry & Rancho",
+      "Burton Los Santos Customs",
+      "Southern San Andreas Super Autos ($35,000)"
+    ],
+    "acquisitionTips": [
+      "Ubiquitous across Los Santos street traffic, especially around Strawberry, Pillbox Hill, and the Olympic Freeway.",
+      "Look for the rare pre-modified blue/orange or yellow/black Dominator that spawns parked outside the Burton Los Santos Customs."
+    ]
   },
   {
     "id": "v_gauntlet",
     "title": "Bravado Gauntlet",
     "category": "Vehicles",
+    "subCategory": "Muscle",
     "stats": {
       "Speed": 0.77,
       "Acceleration": 0.74,
@@ -192,12 +335,22 @@
       "Handling": 0.68
     },
     "description": "A modern muscle coupe styled after the Dodge Challenger, offering balanced handling and brute V8 power utilized extensively in heist getaways.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/gauntlet.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/gauntlet.webp",
+    "spawnLocations": [
+      "Pillbox Hill (UD Heist Prep Locations)",
+      "Rockford Hills &Hawick",
+      "Southern San Andreas Super Autos ($32,000)"
+    ],
+    "acquisitionTips": [
+      "Three static Gauntlets spawn in Pillbox Hill, Rockford Hills, and Hawick if you select the Subtle Approach for The Big Score heist.",
+      "Also spawns regularly in downtown Los Santos traffic or can be purchased for $32,000."
+    ]
   },
   {
     "id": "v_sabre_turbo",
     "title": "Declasse Sabre Turbo",
     "category": "Vehicles",
+    "subCategory": "Muscle",
     "stats": {
       "Speed": 0.75,
       "Acceleration": 0.7,
@@ -205,12 +358,22 @@
       "Handling": 0.64
     },
     "description": "A vintage 1970s Chevrolet Chevelle tribute complete with an exposed shaker hood intake option and high-torque quarter-mile punch.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/sabre_turbo.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/sabre_turbo.webp",
+    "spawnLocations": [
+      "Davis & Grove Street",
+      "Harmony (Route 68)",
+      "La Mesa & Cypress Flats"
+    ],
+    "acquisitionTips": [
+      "Cannot be purchased online in base Story Mode — steal it from traffic in Davis, La Mesa, or along Route 68 in Harmony.",
+      "Take it to Los Santos Customs to fit the Triple Intake Bug Catcher hood and wheelie-ready drag upgrades."
+    ]
   },
   {
     "id": "v_bati_801",
     "title": "Pegassi Bati 801",
     "category": "Vehicles",
+    "subCategory": "Motorcycles",
     "stats": {
       "Speed": 0.85,
       "Acceleration": 0.9,
@@ -218,12 +381,21 @@
       "Handling": 0.78
     },
     "description": "Modeled after the Ducati 848/1098 sportbike, the Bati 801 is one of the most agile two-wheel vehicles, capable of sustained high-speed wheelies.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/bati_801.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/bati_801.webp",
+    "spawnLocations": [
+      "Southern San Andreas Super Autos ($15,000)",
+      "Vinewood Hills & Del Perro"
+    ],
+    "acquisitionTips": [
+      "Costs only $15,000 on Southern San Andreas Super Autos — an essential purchase for completing all 50 Stunt Jumps.",
+      "Pull back slightly on the left stick at high speed to pop a slight wheelie, which significantly boosts top speed on freeway straights."
+    ]
   },
   {
     "id": "v_akuma",
     "title": "Dinka Akuma",
     "category": "Vehicles",
+    "subCategory": "Motorcycles",
     "stats": {
       "Speed": 0.82,
       "Acceleration": 0.96,
@@ -231,12 +403,21 @@
       "Handling": 0.75
     },
     "description": "A stripped-down streetfighter motorcycle based on the Buell XB12S with nearly unrivaled zero-to-sixty acceleration.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/akuma.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/akuma.webp",
+    "spawnLocations": [
+      "Southern San Andreas Super Autos ($9,000)",
+      "Downtown Vinewood"
+    ],
+    "acquisitionTips": [
+      "Available for just $9,000 on Southern San Andreas Super Autos.",
+      "Reaches maximum acceleration even without holding a wheelie, making it ideal for tight technical street races."
+    ]
   },
   {
     "id": "v_sanchez",
     "title": "Maibatsu Sanchez",
     "category": "Vehicles",
+    "subCategory": "Motorcycles",
     "stats": {
       "Speed": 0.68,
       "Acceleration": 0.72,
@@ -244,12 +425,23 @@
       "Handling": 0.78
     },
     "description": "The quintessential off-road dirt bike capable of scaling Mount Chiliad cliffs, leaping sand dunes, and conquering rugged mountain trails.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/sanchez.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/sanchez.webp",
+    "spawnLocations": [
+      "Mount Chiliad Summit & Trails",
+      "Sandy Shores & Grapeseed",
+      "Redwood Lights Track",
+      "Southern San Andreas Super Autos ($7,000)"
+    ],
+    "acquisitionTips": [
+      "Two Sanchez dirt bikes are always parked right next to the viewing platform at the summit of Mount Chiliad.",
+      "Also spawns continuously around the Redwood Lights Motocross Track and dirt roads across Blaine County."
+    ]
   },
   {
     "id": "v_buzzard",
     "title": "Nagasaki Buzzard Attack Chopper",
     "category": "Vehicles",
+    "subCategory": "Aircraft",
     "stats": {
       "Speed": 0.84,
       "Acceleration": 0.82,
@@ -257,12 +449,23 @@
       "Handling": 0.85
     },
     "description": "A light military scout helicopter equipped with twin miniguns and lock-on missile pods, ideal for rapid aerial traversal across the map.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/buzzard.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/buzzard.webp",
+    "relatedPoiId": "property_vespucci_helipad",
+    "spawnLocations": [
+      "NOOSE Headquarters Roof (Palomino Highlands)",
+      "Fort Zancudo",
+      "Warstock Cache & Carry ($2,000,000 -> Vespucci Helipad)"
+    ],
+    "acquisitionTips": [
+      "Free Spawn: Climb the ladder to the rooftop helipad of the NOOSE Government Facility off the Palomino Freeway to find a parked Buzzard.",
+      "Makes hunting all 50 Under the Bridge challenges, Spaceship Parts, and Letter Scraps dramatically faster thanks to its compact rotor diameter."
+    ]
   },
   {
     "id": "v_lazer",
     "title": "JoBuilt P-996 LAZER",
     "category": "Vehicles",
+    "subCategory": "Aircraft",
     "stats": {
       "Speed": 0.98,
       "Acceleration": 0.95,
@@ -270,12 +473,21 @@
       "Handling": 0.9
     },
     "description": "An F-16 Falcon-inspired military fighter jet stationed at Fort Zancudo, armed with dual explosive cannon rounds and heat-seeking air-to-air missiles.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/lazer.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/lazer.webp",
+    "spawnLocations": [
+      "Fort Zancudo Open Hangars & Tarmac"
+    ],
+    "acquisitionTips": [
+      "Cannot be purchased in Story Mode — you must infiltrate Fort Zancudo and steal one from the central open hangar or eastern runway tarmac.",
+      "Best Strategy: Switch to Trevor, activate his Red Mist special ability or parachute directly into the open central hangar, take off stays low over the runway to dodge SAM missiles, then fly to Sandy Shores Airfield to save it in Trevor's hangar.",
+      "Its tight roll rate makes it the #1 choice for completing all 15 Knife Flights."
+    ]
   },
   {
     "id": "v_hydra",
     "title": "Mammoth Hydra",
     "category": "Vehicles",
+    "subCategory": "Aircraft",
     "stats": {
       "Speed": 0.96,
       "Acceleration": 0.92,
@@ -283,12 +495,21 @@
       "Handling": 0.86
     },
     "description": "A military attack jet equipped with VTOL (Vertical Take-Off and Landing) thrusters, allowing it to hover like a helicopter or cruise at supersonic speeds.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/hydra.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/hydra.webp",
+    "spawnLocations": [
+      "Sandy Shores Airfield Hangar",
+      "Los Santos International Airport Hangars"
+    ],
+    "acquisitionTips": [
+      "Toggle between vertical hover mode and horizontal jet propulsion to land in tight spaces where standard jets cannot touch down.",
+      "Store aircraft in Trevor's Sandy Shores Airfield hangar (free from the start of his chapters) or buy the LSIA Hangar as Michael or Franklin."
+    ]
   },
   {
     "id": "v_sandking_xl",
     "title": "Vapid Sandking XL",
     "category": "Vehicles",
+    "subCategory": "Off-Road",
     "stats": {
       "Speed": 0.66,
       "Acceleration": 0.6,
@@ -296,12 +517,23 @@
       "Handling": 0.6
     },
     "description": "A massive lifted heavy-duty 4x4 pickup truck based on the Ford Super Duty, featuring enormous ground clearance and off-road capability.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/sandking_xl.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/sandking_xl.webp",
+    "spawnLocations": [
+      "Larry's RV Sales (Route 68, Harmony)",
+      "Vespucci Beach (Near Del Perro Pier)",
+      "Sandy Shores & Grand Senora Desert",
+      "Southern San Andreas Super Autos ($45,000)"
+    ],
+    "acquisitionTips": [
+      "A pre-modified lifted Sandking XL spawns across the street from the Route 68 Los Santos Customs at Larry's RV Sales between 09:00 and 17:00.",
+      "Another custom Sandking XL frequently spawns parked on the sand just south of Del Perro Pier at Vespucci Beach."
+    ]
   },
   {
     "id": "v_dubsta",
     "title": "Benefactor Dubsta",
     "category": "Vehicles",
+    "subCategory": "Off-Road",
     "stats": {
       "Speed": 0.7,
       "Acceleration": 0.68,
@@ -309,12 +541,21 @@
       "Handling": 0.66
     },
     "description": "A luxury German SUV inspired by the Mercedes-Benz G-Class, combining plush interior status with rugged four-wheel-drive rock crawling.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/dubsta.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/dubsta.webp",
+    "spawnLocations": [
+      "Vinewood Hills & Rockford Hills",
+      "Burton Los Santos Customs (Rare Chrome/Gold Dubsta 2)"
+    ],
+    "acquisitionTips": [
+      "Standard Dubstas patrol Rockford Hills and Vinewood Hills continuously.",
+      "Rare Variant (Dubsta 2): A blacked-out or chrome/gold Dubsta 2 with a hood-mounted spare tire and off-road bullbar can spawn outside Los Santos Customs in Burton or near Madrazo's lockup."
+    ]
   },
   {
     "id": "v_karin_rebel",
     "title": "Karin Rebel",
     "category": "Vehicles",
+    "subCategory": "Off-Road",
     "stats": {
       "Speed": 0.64,
       "Acceleration": 0.62,
@@ -322,6 +563,15 @@
       "Handling": 0.65
     },
     "description": "A battle-hardened 1980s Toyota Hilux 4WD pickup favored by Blaine County survivalists for its indestructible frame and baja rally modifications.",
-    "thumbnailUrl": "assets/media/gtav/vehicles/karin_rebel.webp"
+    "thumbnailUrl": "assets/media/gtav/vehicles/karin_rebel.webp",
+    "spawnLocations": [
+      "Sandy Shores & Alamo Sea",
+      "Paleto Cove Beach",
+      "Southern San Andreas Super Autos ($3,000 Rusty / $22,000 Clean)"
+    ],
+    "acquisitionTips": [
+      "The Rusty Karin Rebel ($3,000) unlocks way more extreme Baja trophy-truck body modifications at Los Santos Customs than the Clean version.",
+      "Spawns everywhere around Sandy Shores, Stab City, and parked along the beaches of Paleto Bay."
+    ]
   }
 ]

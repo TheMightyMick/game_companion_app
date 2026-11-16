@@ -110,6 +110,41 @@ void main() {
       final meta = getWikiItemMetadata(item);
       expect(meta.icon, Icons.category);
       expect(meta.subType, 'General');
+      expect(meta.subCategory, 'General');
+    });
+
+    test('getWikiSubcategoriesForCategory returns canonical vehicle and weapon subcategories', () {
+      final vehicleSubs = getWikiSubcategoriesForCategory('Vehicles');
+      expect(
+        vehicleSubs.map((s) => s.subCategory).toList(),
+        equals(['Supercars', 'Sports', 'Muscle', 'Motorcycles', 'Aircraft', 'Off-Road']),
+      );
+
+      final weaponSubs = getWikiSubcategoriesForCategory('Weapons');
+      expect(
+        weaponSubs.map((s) => s.subCategory).toList(),
+        equals(['Pistols', 'SMGs', 'Shotguns', 'Rifles', 'Snipers', 'Heavy', 'Melee']),
+      );
+
+      expect(getWikiSubcategoriesForCategory('Unknown'), isEmpty);
+    });
+
+    test('WikiItem explicit subCategory overrides ID heuristics when provided', () {
+      final customVehicle = WikiItem(
+        id: 'v_custom_muscle',
+        title: 'Custom Muscle Car',
+        category: 'Vehicles',
+        subCategory: 'Muscle',
+        stats: {},
+        description: 'Explicit muscle subcategory',
+        thumbnailUrl: '',
+      );
+
+      final meta = getWikiItemMetadata(customVehicle);
+      expect(meta.subCategory, 'Muscle');
+      expect(meta.subType, 'Muscle');
+      expect(meta.icon, Icons.local_fire_department);
+      expect(meta.accentColor, const Color(0xFFFF6D00));
     });
   });
 }
